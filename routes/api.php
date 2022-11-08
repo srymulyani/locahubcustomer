@@ -60,7 +60,9 @@ Route::middleware('auth:sanctum')->group (function () {
     Route::delete('bank/{id}', [AddressController::class,'destroy']);
 
     //TRANSACTION
-    Route::get('transaction', [TransactionController::class,'all']); 
+    Route::get('transaction', [TransactionController::class,'all']);
+    Route::post('transaction', [TransactionController::class,'create']);
+    Route::post('edit/transaction',[TransactionController::class,'edit']);
     
 
 });

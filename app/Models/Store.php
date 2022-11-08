@@ -51,7 +51,7 @@ class Store extends Model
     {
         return $this->hasMany(Day::class,'day_id','id');
     }
-    // public function store()
+   
 
     
     // public function getUrlAttribute($url)

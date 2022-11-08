@@ -16,17 +16,23 @@ class Transaction extends Model
      *
      * @var string[]
      */
+    protected $softDelete = true;
+    protected $table ="transaction";
     protected $fillable = [
         'user_id',
+        'store_id',
         'address_id',
         'pay_method_id',
+        'no_resi',
         'jasa_antar',
-        'price_total',
+        'total_shop',
         'disc_total',
         'shipping_total',
-        'shipping_disc',
+        'shippin_disc',
+        'price_total',
         'status',
         'note',
+        'invoice',
     ];
     public function  user()
     {

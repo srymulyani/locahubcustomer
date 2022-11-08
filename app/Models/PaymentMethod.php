@@ -14,6 +14,8 @@ class PaymentMethod extends Model
      *
      * @var string[]
      */
+    protected $softDelete = true;
+    protected $table ="payment_method";
     protected $fillable = [
         'payment_type',
     ];
