@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Transaction;
+use App\Models\PaymentMethod;
+use App\Models\Product;
+use App\Models\Shipment;
+use App\Models\Address;
 use Illuminate\Http\Request;
 use App\Models\TransactionDetail;
 use App\Helpers\ResponseFormatter;
@@ -49,29 +53,52 @@ class TransactionController extends Controller
        
      }
 
-     public function create(Request $request){
+     public function checkout(Request $request){
       try {
-         $request->all();
+         $request->validate([
+         'details' => 'required|array',
+         'details.*.id' => 'exists:products.id',
+         'total_shop' => 'required',
+         'disc_total' => 'required',
+         'shipping disc' =>'required',
+         'shipping_total' => 'required',
+         'shipment' => 'required',
+         'status' => 'required|in:UNPAID,PAID,PACKED,DELIVERED,COMPLETED,CANCELLED,RETURNED'
+      ]);
 
+      $transaction = Transaction::find($request->id);
+
+      $transaction->id = $transaction->id;
+      $transaction->user_id = $transaction->user_id;
+      
+      if ($transaction->status == null) {
+            $transaction->status = 'INV'. Carbon::createFromFormat('Y-m-d H:i:s', now())->format('dmYHis').random_int(100000, 999999). $request->user_id;
+        } else {
+            $transaction->status = $transaction->status;
+        }
+
+      // $paymentDue = (new\DateTime($transactionDate))->modify('+2 day')->format('Y-m-d H:i:s');
          $transaction = Transaction::create([
-            'user_id' => $request->user_id,
+            'user_id' => Auth::user()->id,
+            'code' => $request-> Transaction::generateCode(),
             'store_id' => $request->store_id,
             'address_id' =>$request->address_id,
             'pay_method_id' =>$request->pay_method_id,
-
-            'jasa_antar' => $request->jasa_antar, 
+            'payment_due' =>$request-> payment_due,
+            'payment_status' =>$request->Transaction::UNPAID(),
+            'jasa_antar' => $request->jasa_antar,
             'total_shop' => $request->total_shop,
             'disc_total' => $request->disc_total,
             'shipping_total' =>$request->shipping_total,
             'shipping_disc' => $request->shiping_disc,
             'price_total' => $request->price_total,
-            'status' => $request->status,
+            'status' => $request->Tansaction::CREATED(),
             'note' => $request->note,
          ]);
 
          foreach($request->items as $product){
             TransactionDetail::create([
-               'user_id' => $request->user_id,
+               'user_id' => Auth::user()->id,
                'products_id' => $product['id'],
                'transaction_id' => $transaction->id,
                'qty' => $product['qty'],
@@ -88,6 +115,7 @@ class TransactionController extends Controller
             'errors' =>$th
          ], 'Transaction failed to add',404);
       }
+
      }
      
      public function edit(Request $request){
@@ -95,7 +123,7 @@ class TransactionController extends Controller
 
       $transaction->id = $transaction->id;
       $transaction->store_id = $transaction->store_id;
-      $transaction->pay_method_id = $transaction->pay_method_id;
+      // $transaction->pay_method_id = $transaction->pay_method_id;
 
       if ($transaction->invoice == null) {
             $transaction->invoice = 'INV'. Carbon::createFromFormat('Y-m-d H:i:s', now())->format('dmYHis').random_int(100000, 999999). $request->user_id.$request->store_id;
@@ -103,7 +131,7 @@ class TransactionController extends Controller
             $transaction->invoice = $transaction->invoice;
         }
 
-        if ($request->nomor_resi != null) {
+        if ($request->no_resi != null) {
             $transaction->no_resi = $request->no_resi;
         } else {
             $transaction->no_resi = $transaction->no_resi;
@@ -129,4 +157,5 @@ class TransactionController extends Controller
             "Transaction successfully added"
          );
      }
+
 }

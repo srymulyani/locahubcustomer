@@ -27,7 +27,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //PRODUCTS
 Route::get('products',[ProductController::class,'all']);
-// Route::post('create', [ProductController::class,'create']);
+Route::post('products', [ProductController::class,'create']);
+Route::post('updateProducts', [ProductController::class,'updateAll']);
+Route::delete('products{id}', [ProductController::class,'deleteProduct']);
+
 
 //PRODUCTS CATEGORY
 Route::get('category',[ProductCategoryController::class,'all']);
@@ -61,8 +64,17 @@ Route::middleware('auth:sanctum')->group (function () {
 
     //TRANSACTION
     Route::get('transaction', [TransactionController::class,'all']);
-    Route::post('transaction', [TransactionController::class,'create']);
+    Route::post('checkout', [TransactionController::class,'checkout']);
     Route::post('edit/transaction',[TransactionController::class,'edit']);
+
+    //STORE
+    Route::get('store', [StoreController::class,'show']);
+    Route::post('create', [StoreController::class,'checkout']);
+    Route::post('store-update',[StoreController::class,'update']);
+
+    //VOUCHER
+    Route::get('voucher', [VoucherController::class,'all']);
+    Route::post('voucher', [VoucherController::class,'create']);
     
 
 });

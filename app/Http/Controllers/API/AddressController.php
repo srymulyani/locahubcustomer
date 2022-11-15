@@ -22,10 +22,10 @@ class AddressController extends Controller
                 'complete_address'=> 'required|string',
                 'address_detail' =>'required|string',
                 'choice' => 'numeric',
-                'kode' => 'required|numeric',
-                'kecamatan' => 'required|string',
-                'kota' => 'required|string',
-                'provinsi' => 'required|string',
+                'postcode' => 'required|numeric',
+                'district' => 'required|string',
+                'city' => 'required|string',
+                'province' => 'required|string',
 
             ]);
 
@@ -54,10 +54,10 @@ class AddressController extends Controller
                 'address'=>$request->address,
                 'complete_address'=>$request->complete_address,
                 'address_detail' =>$request->address_detail,
-                'kode' => $request->kode,
-                'kecamatan' => $request->kecamatan,
-                'kota' => $request->kota,
-                'provinsi' => $request->provinsi,
+                'postcode' => $request->postcode,
+                'district' => $request->district,
+                'city' => $request->city,
+                'province' => $request->province,
                 
             ]);
 
@@ -123,10 +123,10 @@ class AddressController extends Controller
         $address->address =  $request->address;
         $address->complete_address =  $request->complete_address;
         $address->address_detail =  $request->address_detail;
-        $address->kode =  $request->kode;
-        $address->kecamatan =  $request->kecamatan;
-        $address->kota = $request->kota;
-        $address->provinsi =  $request->provinsi;
+        $address->postcode =  $request->postcode;
+        $address->district =  $request->district;
+        $address->city = $request->city;
+        $address->province =  $request->province;
         
         $address->save();
 
