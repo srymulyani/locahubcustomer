@@ -22,10 +22,10 @@ class AddressController extends Controller
                 'complete_address'=> 'required|string',
                 'address_detail' =>'required|string',
                 'choice' => 'numeric',
-                'kode' => 'required|numeric',
-                'kecamatan' => 'required|string',
-                'kota' => 'required|string',
-                'provinsi' => 'required|string',
+                'postcode' => 'required|numeric',
+                'district' => 'required|string',
+                'city' => 'required|string',
+                'province' => 'required|string',
 
             ]);
 
@@ -54,10 +54,10 @@ class AddressController extends Controller
                 'address'=>$request->address,
                 'complete_address'=>$request->complete_address,
                 'address_detail' =>$request->address_detail,
-                'kode' => $request->kode,
-                'kecamatan' => $request->kecamatan,
-                'kota' => $request->kota,
-                'provinsi' => $request->provinsi,
+                'postcode' => $request->postcode,
+                'district' => $request->district,
+                'city' => $request->city,
+                'province' => $request->province,
                 
             ]);
 
@@ -110,7 +110,7 @@ class AddressController extends Controller
     }
     public function edit(Request $request)
     {
-         $request->all();
+        $request->all();
 
         $request->user_id = $request->user_id;
 
@@ -123,10 +123,10 @@ class AddressController extends Controller
         $address->address =  $request->address;
         $address->complete_address =  $request->complete_address;
         $address->address_detail =  $request->address_detail;
-        $address->kode =  $request->kode;
-        $address->kecamatan =  $request->kecamatan;
-        $address->kota = $request->kota;
-        $address->provinsi =  $request->provinsi;
+        $address->postcode =  $request->postcode;
+        $address->district =  $request->district;
+        $address->city = $request->city;
+        $address->province =  $request->province;
         
         $address->save();
 
@@ -147,25 +147,26 @@ class AddressController extends Controller
     }
      public function destroy($id) //masih belum bisa
     {
-        // $address = Address::find($id)->delete();
-        
-        // Address::where('id')->delete();
-        $address = Address::find($id);
-       
-        $address->delete();
-        // print_r($id);
-        die();
-        if($address){
-            return ResponseFormatter::success([
-                $address,
-                'Berhasil Menghapus Alamat',
-            ], 200);
-        } else{
-            return response()->json([
-                'success' => false,
-                'message' => 'Alamat tidak dapat dihapus',
-            ], 400);
+        try {
+        $address = Address::where('id',$id)->first();
+         if ($address !=null){
+            $address->delete();
         }
+            return ResponseFormatter::success([
+            $address,
+            'Berhasil Menghapus Alamat',
+            ], 200);
+       
+        } catch (\Throwable $th) {
+            return ResponseFormatter::error(
+                [
+                    "message" => "Something went wrong",
+                    "errors" => $th->getMessage()
+                ],
+                "Alamat Tidak dapat dihapus", 500
+            );
+        }
+      
         
     }
 }

@@ -8,6 +8,7 @@ use App\Models\ProductVariation;
 use App\Models\Product;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -15,7 +16,7 @@ class ProductController extends Controller
     {
         $id =$request->input('id');
         $limit =$request->input('limit');
-        // $user_id =$request->input('user_id');
+        $user_id =$request->input('user_id');
         $name =$request->name;
         $price =$request->input('price');
         $products_information=$request->input('products_information');
@@ -89,11 +90,12 @@ class ProductController extends Controller
     );
     }
 
-    public function create(Request $request) //blm bisa
+
+    public function create(Request $request) 
     {
         try{
-            $request->validate([
-
+          
+                $validator= Validator::make($request->all(),[
                 'user_id' => 'required',
                 'name' => 'required|string|max:255',
                 'price' => 'required',
@@ -101,14 +103,21 @@ class ProductController extends Controller
                 'categories_id' =>'required',
                 'store_id' => 'required',
                 'tags' => 'required|string',
-                'url_disc' => 'array',
-                'variation_id' => 'required',
+                'galleries' => 'array',
+                'variation' => 'array',
                 'weight' => 'required',
                 'long' => 'required',
                 'wide' => 'required',
                 'height' => 'required',
+                'status' => 'required',
 
             ]);
+            if ($validator->fails()){
+            return ResponseFormatter::error([
+                'message'=>'Validation fails',
+                'errors' => $validator->errors()
+            ],'Authentication Failed',422);
+        }
 
             $product = Product::create([
                 
@@ -119,12 +128,11 @@ class ProductController extends Controller
                 'categories_id' => $request->categories_id,
                 'store_id' => $request->store_id,
                 'tags' => $request->tags,
-
-                'variation_id' => $request->variation_id,
                 'weight' => $request->weight,
                 'long' => $request->long,
                 'wide' => $request->wide,
                 'height' => $request->height,
+                'status' => $request->status,
             ]);
 
             
@@ -175,37 +183,145 @@ class ProductController extends Controller
                 $image->url = $path;
                 $image->save();
             }
-    
-            if ($request->variations != null) {
-                foreach ($request->variations as $item) {
+            foreach ($request->variation as $item) {
                     ProductVariation::create([
                         'products_id' => $product->id,
                         'name' => $item['name'],
                         'detail' => $item['detail'],
-                        'price' => $item['price'],
-                    ]);
-                }
+                        'products_price' => $product->price,
+                    ]);  
             }       
 
             return ResponseFormatter::success(
                 
-                    // 'product' => $product,
-                $product->load('variations', 'galleries')
-                    // 'product' => $product->load('variations', 'galleries')
-                ,
+                $product->load('variation', 'galleries'),
                 'Produk berhasil ditambah'
             );
         } catch (\Throwable $th) {
             return ResponseFormatter::error(
                 [
                     "message" => "Something went wrong",
-                    "errors" => $th
+                    "errors" => $th->getMessage()
                 ],
-                "Produk Gagal ditambah", 404
+                "Produk Gagal ditambah", 500
             );
         };
     }
-    // public function update(){
+    public function updateAll(Request $request){
 
-    // }
+    //         if ($request->hasFile('image1')) {
+    //             $image = new ProductGallery();
+    //             $image->products_id = $product->id;
+    //             $path = $request->file('image1')->store('productGalleries');
+    //             $image->url = $path;
+    //             $image->save();
+    //         }
+
+    //         if ($request->hasFile('image2')) {
+    //             $image = new ProductGallery();
+    //             $image->products_id = $product->id;
+    //             $path = $request->file('image2')->store('productGalleries');
+    //             $image->url = $path;
+    //             $image->save();
+    //         }
+
+    //         if ($request->hasFile('image3')) {
+    //             $image = new ProductGallery();
+    //             $image->products_id = $product->id;
+    //             $path = $request->file('image3')->store('productGalleries');
+    //             $image->url = $path;
+    //             $image->save();
+    //         }
+
+    //         if ($request->hasFile('image4')) {
+    //             $image = new ProductGallery();
+    //             $image->products_id = $product->id;
+    //             $path = $request->file('image4')->store('productGalleries');
+    //             $image->url = $path;
+    //             $image->save();
+    //         }
+
+    //         if ($request->hasFile('image5')) {
+    //             $image = new ProductGallery();
+    //             $image->products_id = $product->id;
+    //             $path = $request->file('image5')->store('productGalleries');
+    //             $image->url = $path;
+    //             $image->save();
+    //         }
+
+    //         if ($request->hasFile('image6')) {
+    //             $image = new ProductGallery();
+    //             $image->products_id = $product->id;
+    //             $path = $request->file('image6')->store('productGalleries');
+    //             $image->url = $path;
+    //             $image->save();
+    //         }
+
+        try {
+
+        $request->all();
+        $id = $request->id;
+        $product = Product::where('id',$id)->first();
+
+        $product->name=$request->name;
+        $product->price=$request->price;
+        $product->products_information=$request->products_information;
+        $product->categories_id=$request->categories_id;
+        $product->store_id=$request->store_id;
+        $product->tags=$request->tags;
+        $product->wide=$request->wide;
+        $product->long=$request->long;
+        $product->weight=$request->weight;
+        $product->status=$request->status;
+        
+        $product->save();
+
+            ProductVariation::where('products_id', $request->id)
+            ->update([
+                "products_id" => $request->id,
+                "name" => $request->name,
+                "detail" => $request->products_information,
+                "products_price" => $request->price,
+            ]);
+
+             return ResponseFormatter::success(
+                // $product->load('variation', 'galleries'),
+                'Produk berhasil diubah'
+            );
+        } catch (\Throwable $th) {
+              return ResponseFormatter::error(
+                [
+                    "message" => "Something went wrong",
+                    "errors" => $th->getMessage()
+                ],
+                "Produk Gagal diubah", 500
+            );
+        };
+    }
+
+    public function delete($id){
+        try {
+        $product = Product::where('id',$id)->first();
+       
+        if ($product !=null){
+            $product->delete();
+        }
+       
+        return ResponseFormatter::success([
+            $product,
+            'Berhasil Menghapus Produk',
+            ], 200);
+        } catch (\Throwable $th) {
+            return ResponseFormatter::error(
+                [
+                    "message" => "Something went wrong",
+                    "errors" => $th->getMessage()
+                ],
+                "Produk Gagal dihapus", 500
+            );}
+    
+    
+    }
+
+
 }
