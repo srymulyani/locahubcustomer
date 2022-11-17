@@ -21,7 +21,11 @@ class CreateProductsTable extends Migration
             $table->bigInteger('categories_id');
             $table->bigInteger('stores_id');
             $table->string('tags')->nullable();
-            $table->string('url_disc');
+            $table->string('height');
+            $table->string('wide');
+            $table->string('long');
+            $table->string('weight');
+            $table->string('status');
             $table->softDeletes();
             $table->timestamps();
         });

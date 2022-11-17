@@ -25,13 +25,19 @@ class Address extends Model
         'complete_address',
         'address_detail',
         'choice',
-        'kode',
-        'kecamatan',
-        'kota',
-        'provinsi',
+        'postcode',
+        'district',
+        'city_id',
+        'province_id',
     ];
 
     public function user(){
         return $this->belongsTo(User::class, 'user_id','id');
+    }
+    public function city(){
+        return $this->hasOne(City::class,'city_id','id');
+    }
+    public function province(){
+        return $this->hasOne(Province::class,'province_id','id');
     }
 }

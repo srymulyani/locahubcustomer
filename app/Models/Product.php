@@ -22,8 +22,10 @@ class Product extends Model
         'weight',
         'long',
         'wide',
+        'height',
         'store_id',
         'tags',
+        'status',
 
     ];
     public function category ()
