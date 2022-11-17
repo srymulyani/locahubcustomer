@@ -29,7 +29,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('products',[ProductController::class,'all']);
 Route::post('products', [ProductController::class,'create']);
 Route::post('updateProducts', [ProductController::class,'updateAll']);
-Route::delete('products{id}', [ProductController::class,'deleteProduct']);
+Route::delete('products/{id}', [ProductController::class,'delete']);
 
 
 //PRODUCTS CATEGORY

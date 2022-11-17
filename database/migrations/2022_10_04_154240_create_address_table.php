@@ -23,6 +23,10 @@ class CreateAddressTable extends Migration
             $table->longText('complete_address');
             $table->longText('address_detail');
             $table->boolean('choice')->default(false);
+            $table->bigInteger('postcode');
+            $table->string('district');
+            $table->bigInteger('city_id');
+            $table->bigInteger('province_id');
             $table->softDeletes();
             $table->timestamps();
         });

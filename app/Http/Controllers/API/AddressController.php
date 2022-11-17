@@ -110,7 +110,7 @@ class AddressController extends Controller
     }
     public function edit(Request $request)
     {
-         $request->all();
+        $request->all();
 
         $request->user_id = $request->user_id;
 
@@ -147,25 +147,26 @@ class AddressController extends Controller
     }
      public function destroy($id) //masih belum bisa
     {
-        // $address = Address::find($id)->delete();
-        
-        // Address::where('id')->delete();
-        $address = Address::find($id);
-       
-        $address->delete();
-        // print_r($id);
-        die();
-        if($address){
-            return ResponseFormatter::success([
-                $address,
-                'Berhasil Menghapus Alamat',
-            ], 200);
-        } else{
-            return response()->json([
-                'success' => false,
-                'message' => 'Alamat tidak dapat dihapus',
-            ], 400);
+        try {
+        $address = Address::where('id',$id)->first();
+         if ($address !=null){
+            $address->delete();
         }
+            return ResponseFormatter::success([
+            $address,
+            'Berhasil Menghapus Alamat',
+            ], 200);
+       
+        } catch (\Throwable $th) {
+            return ResponseFormatter::error(
+                [
+                    "message" => "Something went wrong",
+                    "errors" => $th->getMessage()
+                ],
+                "Alamat Tidak dapat dihapus", 500
+            );
+        }
+      
         
     }
 }
