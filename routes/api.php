@@ -7,6 +7,8 @@ use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\TransactionController;
+use App\Http\Controllers\API\StoreController;
+use App\Http\Controllers\API\VoucherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -69,7 +71,7 @@ Route::middleware('auth:sanctum')->group (function () {
 
     //STORE
     Route::get('store', [StoreController::class,'show']);
-    Route::post('create', [StoreController::class,'checkout']);
+    Route::post('create-store',[StoreController::class,'create']);
     Route::post('store-update',[StoreController::class,'update']);
 
     //VOUCHER
