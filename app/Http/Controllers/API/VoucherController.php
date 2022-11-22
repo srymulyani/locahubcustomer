@@ -68,7 +68,6 @@ class VoucherController extends Controller
         $end_date = $request->end_date;
         $store_id = $request->store_id;
 
-        // $vouchers = Voucher::query();
 
         if($id){
         $vouchers = Voucher::where('id', $id)->find($id);

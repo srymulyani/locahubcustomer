@@ -94,6 +94,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(BankAccount::class,'user_id','id');
     }
+
     // public function setPasswordAttribute($value){
     //     $this->attributes['password'] = Hash::make($value);
     // }
