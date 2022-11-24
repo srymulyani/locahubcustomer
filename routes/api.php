@@ -76,7 +76,11 @@ Route::middleware('auth:sanctum')->group (function () {
     Route::get('voucher', [VoucherController::class,'all']);
     Route::post('voucher', [VoucherController::class,'create']);
     
-
+    //PRODUCT_CATEGORY
+    Route::get('category', [ProductCategoryController::class,'all']);
+    Route::post('category', [ProductCategoryController::class,'create']);
+    Route::post('edit/category', [ProductCategoryController::class,'edit']);
+    Route::delete('category/{id}', [ProductCategoryController::class,'delete']);
 });
 
 
