@@ -50,24 +50,24 @@ class Transaction extends Model
     public const PAID = 'paid';
     public const UNPAID ='unpaid';
 
-    public const CREATED ='created';
     public const CONFIRMED ='confirmed';
     public const PACKED ='packed';
     public const DELIVERED ='delivered';
     public const COMPLETED ='completed';
     public const CANCELLED ='cancelled';
     public const RETURNED ='returned';
+    public const EXPIRED ='expired';
 
     public const STATUSES =[
-        self::CREATED =>'Created',
         self::UNPAID =>'Unpaid',
+        self::PAID => 'Paid',
         self::CONFIRMED =>'Confirmed',
         self::PACKED =>'Packed',
         self::DELIVERED =>'Delivered',
         self::COMPLETED =>'Completed',
         self::CANCELLED =>'Cancelled',
         self::RETURNED => 'Returned',
-        self::Expired => 'Expired',
+        self::EXPIRED => 'Expired',
 
     ];
 

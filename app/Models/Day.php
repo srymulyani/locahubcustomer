@@ -15,12 +15,12 @@ class Day extends Model
      * @var string[]
      */
     protected $fillable = [
-        'senin',
-        'selasa',
-        'rabu',
-        'kamis',
-        'jumat',
-        'sabtu',
-        'minggu',
+        'sunday',
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday',
     ];
 }

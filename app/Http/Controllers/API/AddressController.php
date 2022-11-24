@@ -24,8 +24,8 @@ class AddressController extends Controller
                 'choice' => 'numeric',
                 'postcode' => 'required|numeric',
                 'district' => 'required|string',
-                'city' => 'required|string',
-                'province' => 'required|string',
+                'city_id' => 'required',
+                'province_id' => 'required',
 
             ]);
 
@@ -56,8 +56,8 @@ class AddressController extends Controller
                 'address_detail' =>$request->address_detail,
                 'postcode' => $request->postcode,
                 'district' => $request->district,
-                'city' => $request->city,
-                'province' => $request->province,
+                'city_id' => $request->city_id,
+                'province_id' => $request->province_id,
                 
             ]);
 
@@ -111,11 +111,8 @@ class AddressController extends Controller
     public function edit(Request $request)
     {
         $request->all();
-
         $request->user_id = $request->user_id;
-
         $address = Address::find($request->id);
-        // $address = update($data);
 
         $address->address_label =  $request->address_label;
         $address->name =  $request->name;
@@ -125,8 +122,8 @@ class AddressController extends Controller
         $address->address_detail =  $request->address_detail;
         $address->postcode =  $request->postcode;
         $address->district =  $request->district;
-        $address->city = $request->city;
-        $address->province =  $request->province;
+        $address->city_id = $request->city_id;
+        $address->province_id =  $request->province_id;
         
         $address->save();
 
