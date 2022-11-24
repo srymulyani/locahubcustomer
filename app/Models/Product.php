@@ -46,6 +46,6 @@ class Product extends Model
     }
     public function store()
     {
-        return $this->hasMany(Store::class,'id','store_id');
+        return $this->belongsTo(Store::class);
     }
 }
