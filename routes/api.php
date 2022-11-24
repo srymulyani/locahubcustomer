@@ -6,7 +6,7 @@ use App\Http\Controllers\API\ProductCategoryController;
 use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\ForgotPasswordController;
-use App\Http\Controllers\API\TransactionController;
+use App\Http\Controllers\API\{CartController, TransactionController};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -66,6 +66,13 @@ Route::middleware('auth:sanctum')->group (function () {
     Route::get('transaction', [TransactionController::class,'all']);
     Route::post('checkout', [TransactionController::class,'checkout']);
     Route::post('edit/transaction',[TransactionController::class,'edit']);
+
+    // CART
+    Route::get('/cart', [CartController::class, 'index']);
+    Route::post('/cart', [CartController::class, 'store']);
+    Route::delete('/cart/bulk-delete', [CartController::class, 'bulkDestroy']);
+    Route::delete('/cart/clear', [CartController::class, 'clear']);
+    Route::delete('/cart/{cart}', [CartController::class, 'destroy']);
 
     //STORE
     Route::get('store', [StoreController::class,'show']);
