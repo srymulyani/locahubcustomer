@@ -25,7 +25,12 @@ class Voucher extends Model
         'minimum',
         'quota',
         'description',
-        'status',
+        'choice',
+        'status'
     ];
+
+    public function store(){
+         return $this->belongsTo(Store::class,'store_id', 'id');
+    }
 
 }

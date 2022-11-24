@@ -7,6 +7,10 @@ use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\TransactionController;
+use App\Http\Controllers\API\StoreController;
+use App\Http\Controllers\API\VoucherController;
+use App\Http\Controllers\API\ProductRatingController;
+use App\Http\Controllers\API\ProductRatingGalleryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -63,18 +67,23 @@ Route::middleware('auth:sanctum')->group (function () {
     Route::delete('bank/{id}', [AddressController::class,'destroy']);
 
     //TRANSACTION
-    Route::get('transaction', [TransactionController::class,'all']);
+    Route::get('transaction',[TransactionController::class,'all']);
     Route::post('checkout', [TransactionController::class,'checkout']);
     Route::post('edit/transaction',[TransactionController::class,'edit']);
 
     //STORE
     Route::get('store', [StoreController::class,'show']);
-    Route::post('create', [StoreController::class,'checkout']);
+    Route::post('create-store',[StoreController::class,'create']);
     Route::post('store-update',[StoreController::class,'update']);
 
     //VOUCHER
     Route::get('voucher', [VoucherController::class,'all']);
     Route::post('voucher', [VoucherController::class,'create']);
+
+    //RATING
+    Route::get('rating', [ProductRatingController::class,'show']);
+    Route::post('create-rating', [ProductRatingController::class,'create']);
+    Route::post('upload-rating',[ProductRatingGalleryController::class,'upload']);
     
     //PRODUCT_CATEGORY
     Route::get('category', [ProductCategoryController::class,'all']);
