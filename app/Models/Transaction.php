@@ -60,12 +60,14 @@ class Transaction extends Model
 
     public const STATUSES =[
         self::CREATED =>'Created',
+        self::UNPAID =>'Unpaid',
         self::CONFIRMED =>'Confirmed',
         self::PACKED =>'Packed',
         self::DELIVERED =>'Delivered',
         self::COMPLETED =>'Completed',
         self::CANCELLED =>'Cancelled',
         self::RETURNED => 'Returned',
+        self::Expired => 'Expired',
 
     ];
 
