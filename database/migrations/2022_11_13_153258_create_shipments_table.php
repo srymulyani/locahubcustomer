@@ -15,8 +15,8 @@ class CreateShipmentsTable extends Migration
     {
         Schema::create('shipments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained();
-            $table->foreignId('transaction_id')->nullable()->constrained();
+            $table->bigInteger('user_id');
+            $table->bigInteger('transaction_id');
             $table->string('track_number')->nullable();
             $table->string('status');
             $table->bigInteger('qty');
@@ -27,9 +27,6 @@ class CreateShipmentsTable extends Migration
             $table->bigInteger('postcode')->nullable();
             $table->datetime('shipped_at')->nullable();
             $table->bigInteger('shipped_by')->nullable();
-
-            $table->foreign('shipped_by')->references('id')->on('users');
-            $table->index('track_number');
 
             $table->softDeletes();
             $table->timestamps();

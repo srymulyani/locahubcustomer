@@ -31,17 +31,13 @@ class Store extends Model
         'description',
         'store_note',
     ];
-    public function store()
-    {
-        return $this->belongsTo(User::class,'user_id','id');
-    }
-    // public function product()
-    // {
-    //     return $this->hasMany(Product::class,'store_id','id');
-    // }
+
     public function courier ()
     {
-        return $this->belongsTo(Courier::class,'couriers_id','id');
+        return $this->hasMany(Courier::class,'couriers_id','id');
+    }
+    public function bank(){
+        return $this->hasMany(Bank::class,'store_id', 'id');
     }
     public function voucher()
     {
@@ -51,8 +47,6 @@ class Store extends Model
     {
         return $this->hasMany(Day::class,'day_id','id');
     }
-   
-
     
     // public function getUrlAttribute($url)
     // {

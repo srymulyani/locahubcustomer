@@ -10,6 +10,13 @@ use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\ProductCategoryController;
 use App\Http\Controllers\API\EmailVerificationController;
+use App\Http\Controllers\API\{CartController, TransactionController};
+use App\Http\Controllers\API\StoreController;
+use App\Http\Controllers\API\VoucherController;
+use App\Http\Controllers\API\ProductRatingController;
+use App\Http\Controllers\API\ProductRatingGalleryController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,23 +71,44 @@ Route::middleware('auth:sanctum')->group (function () {
     Route::delete('bank/{id}', [AddressController::class,'destroy']);
 
     //TRANSACTION
-    Route::get('transaction', [TransactionController::class,'all']);
-    Route::post('checkout', [TransactionController::class,'checkout']);
-    Route::post('edit/transaction',[TransactionController::class,'edit']);
+    // Route::get('transaction', [TransactionController::class,'all']);
+    // Route::post('checkout', [TransactionController::class,'checkout']);
+    // Route::post('edit/transaction',[TransactionController::class,'edit']);
+
+    // NEW TRANSACTION
+    Route::get('/transaction', [TransactionController::class, 'index']);
+    Route::get('/transaction/{transaction}', [TransactionController::class, 'show']);
+
+    // CART
+    Route::get('/cart', [CartController::class, 'index']);
+    Route::post('/cart', [CartController::class, 'store']);
+    Route::delete('/cart/bulk-delete', [CartController::class, 'bulkDestroy']);
+    Route::delete('/cart/clear', [CartController::class, 'clear']);
+    Route::delete('/cart/{cart}', [CartController::class, 'destroy']);
 
     //STORE
     Route::get('store', [StoreController::class,'show']);
-    Route::post('create', [StoreController::class,'checkout']);
+    Route::post('create-store',[StoreController::class,'create']);
     Route::post('store-update',[StoreController::class,'update']);
 
     //VOUCHER
     Route::get('voucher', [VoucherController::class,'all']);
     Route::post('voucher', [VoucherController::class,'create']);
-
+    
     //EMAIL_VERIFICATION
     Route::post('email/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail']);
     Route::get('verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
 
+    //RATING
+    Route::get('rating', [ProductRatingController::class,'show']);
+    Route::post('create-rating', [ProductRatingController::class,'create']);
+    Route::post('upload-rating',[ProductRatingGalleryController::class,'upload']);
+    
+    //PRODUCT_CATEGORY
+    Route::get('category', [ProductCategoryController::class,'all']);
+    Route::post('category', [ProductCategoryController::class,'create']);
+    Route::post('edit/category', [ProductCategoryController::class,'edit']);
+    Route::delete('category/{id}', [ProductCategoryController::class,'delete']);
 });
 
 

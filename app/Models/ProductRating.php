@@ -8,23 +8,33 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 class ProductRating extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
     /**
      * The attributes that are mass assignable.
      *
      * @var string[]
      */
+    protected $softDelete = true;
     protected $table ="products_rating";
     protected $fillable = [
+        'id',
         'user_id',
-        'name',
-        'star',
-        'photo_testi',
-        'comentar',
+        'products_id',
+        'content',
+        'rating',
+        'url_image',
     ];
-    public function getUrlAttribute($photo_testi)
-    {
-        return config('photo_testi.url') . Storage::url($photo_testi);
+
+    public function getStatusAttribute(){
+        return $this->attributes['status'] == 0 ? 'Inactive' : 'Active';
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
+
+    public function product(){
+        return $this->belongsTo(Product::class);
     }
    
 }

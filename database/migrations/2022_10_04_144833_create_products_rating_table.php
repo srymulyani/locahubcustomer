@@ -14,14 +14,14 @@ class CreateProductsRatingTable extends Migration
     public function up()
     {
         Schema::create('products_rating', function (Blueprint $table) {
-            $table->id();
-            $table->bigInteger('user_id');
-            $table->bigInteger('products_id');
-            $table->string('star');
-            $table->string('url_testimoni');
-            $table->longText('comentar');
+          $table->id();
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('products_id')->constrained()->cascadeOnDelete();
+            $table->string('content');
+            $table->boolean('status')->default(false);
+            $table->unsignedTinyInteger('rating');
+            $table->string('url_image')->nullable();
             $table->softDeletes();
-
             $table->timestamps();
         });
     }
