@@ -47,6 +47,16 @@ class Store extends Model
     {
         return $this->hasMany(Day::class,'day_id','id');
     }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function cart_products()
+    {
+        return $this->hasManyThrough(Cart::class, Product::class);
+    }
     
     // public function getUrlAttribute($url)
     // {
