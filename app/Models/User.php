@@ -35,6 +35,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'bio',
         'roles',
         'password',
+        'profile_image'
         // 'isVerified',
     ];
 
@@ -65,7 +66,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $appends = [
-        'profile_photo_url',
+        'profile_image_url',
     ];
 
     public function transactions ()
@@ -102,6 +103,12 @@ class User extends Authenticatable implements MustVerifyEmail
         $url = 'https://spa.test/reset-password?token='.$token;
 
         $this->notify(new MailResetPasswordNotification($url));
+    }
+
+    public function getProfileImageUrlAttribute(){
+        if($this->profile_image){
+            return asset('/uploads/profile_images/'.$this->profile_image);
+        }
     }
 
 }

@@ -10,6 +10,7 @@ use Laravel\Fortify\Rules\Password;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -100,6 +101,21 @@ class UserController extends Controller
         $data = $request->all();
 
         $user = Auth::user();
+
+        if($request->hasFile('profile_image')){
+            if($user->profile_image){
+                $old_path=public_path().'/uploads/profile_images/'.$user->profile_image;
+                if(File::exists($old_path)){
+                    File::delete($old_path);
+                }
+            }
+
+            $image_name='profile-image-'.time().'.'.$request->profile_image->extension();
+            $request->profile_image->move(public_path('/uploads/profile_images'),$image_name);
+        }else{
+            $image_name=$user->profile_image;
+        }
+
         $user->update($data);
 
         $user->name = $request->name;
@@ -108,6 +124,7 @@ class UserController extends Controller
         $user->ttl= $request->ttl;
         $user->username = $request->username;
         $user->phone_number = $request->phone_number;
+        $user->profile_image = $image_name;
         $user->save();
 
         return ResponseFormatter::success(

@@ -5,8 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\AddressController;
 use App\Http\Controllers\API\ProductController;
-use App\Http\Controllers\API\TransactionController;
-use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\ProductCategoryController;
 use App\Http\Controllers\API\EmailVerificationController;
@@ -15,8 +13,6 @@ use App\Http\Controllers\API\StoreController;
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\API\ProductRatingController;
 use App\Http\Controllers\API\ProductRatingGalleryController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,7 +45,6 @@ Route::post('register',[UserController::class,'register']);
 Route::post('login',[UserController::class,'login']);
 Route::post('forgot-password', [ForgotPasswordController::class,'ForgotPassword']); 
 Route::post('reset-password', [ForgotPasswordController::class,'reset']);
-// Route::post('reset-password', [ResetPasswordController::class,'ResetPassword' ]);
 
 
 Route::middleware('auth:sanctum')->group (function () {
