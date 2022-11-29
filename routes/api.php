@@ -1,11 +1,15 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\AddressController;
 use App\Http\Controllers\API\ProductController;
-use App\Http\Controllers\API\ProductCategoryController;
+use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\ResetPasswordController;
-use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\ForgotPasswordController;
+use App\Http\Controllers\API\ProductCategoryController;
+use App\Http\Controllers\API\EmailVerificationController;
 use App\Http\Controllers\API\{CartController, TransactionController};
 use App\Http\Controllers\API\StoreController;
 use App\Http\Controllers\API\VoucherController;
@@ -43,13 +47,13 @@ Route::get('category',[ProductCategoryController::class,'all']);
 //USER
 Route::post('register',[UserController::class,'register']);
 Route::post('login',[UserController::class,'login']);
-Route::post('forgot-password', [ForgotPasswordController::class,'ForgotPassword'] ); 
-Route::post('reset-password', [ResetPasswordController::class,'ResetPassword' ]); 
-// Route::post('password/reset', ResetPasswordController::class );
+Route::post('forgot-password', [ForgotPasswordController::class,'ForgotPassword']); 
+Route::post('reset-password', [ForgotPasswordController::class,'reset']);
+// Route::post('reset-password', [ResetPasswordController::class,'ResetPassword' ]);
 
 
 Route::middleware('auth:sanctum')->group (function () {
-    Route::get('user',  [UserController::class, 'fetch']);
+    Route::get('user',  [UserController::class, 'fetch'])->middleware('verified');
     Route::post('user',[UserController::class,'updateProfile']);
     Route::post('logout',[UserController::class,'logout']);
     Route::post('changePassword', [UserController::class, 'changePassword']);
@@ -90,6 +94,10 @@ Route::middleware('auth:sanctum')->group (function () {
     //VOUCHER
     Route::get('voucher', [VoucherController::class,'all']);
     Route::post('voucher', [VoucherController::class,'create']);
+    
+    //EMAIL_VERIFICATION
+    Route::post('email/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail']);
+    Route::get('verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
 
     //RATING
     Route::get('rating', [ProductRatingController::class,'show']);
