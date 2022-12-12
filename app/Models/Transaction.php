@@ -20,29 +20,13 @@ class Transaction extends Model
     protected $softDelete = true;
     protected $table ="transaction";
     protected $fillable = [
-        'user_id',
-        'code',
-        'store_id',
+        'buyer_id',
         'address_id',
-        'pay_method_id',
-        'payment_url',
-        'payment_token',
-        'payment_status',
-        'payment_due',
-        'no_resi',
-        'jasa_antar',
-        'cancelation_note',
-        'cancelled_by',
-        'approved_at',
-        'approved_by',
-        'total_shop',
-        'disc_total',
-        'shipping_total',
-        'shipping_disc',
-        'price_total',
-        'status',
+        'code',
         'note',
-        'invoice',
+        'grand_total',
+        'payment_status',
+        'snap_token',
     ];
 
     public const TRANSACTIONCODE ='INV';
@@ -75,7 +59,7 @@ class Transaction extends Model
     {
         $dateCode = self::TRANSACTIONCODE. '/'. date('Ymd'). '/'. General::integerToRoman(date('m')). '/'. General::integerToRoman(date('d')). '/';
 
-        $lastTransaction = self::select([\DB::raw('MAX(transactions.code) AS last_code')])
+        $lastTransaction = self::select([\DB::raw('MAX(transaction.code) AS last_code')])
             ->where('code', 'like', $dateCode. '%')
             ->first();
 
@@ -89,7 +73,7 @@ class Transaction extends Model
             $transactionCode = $dateCode. $nextTransactionNumber;
         }
         if (self::_isTransactionCodeExist($transactionCode)){
-            // return generateTransactionCode();
+            return generateTransactionCode();
         }
 
         return $transactionCode;
@@ -97,7 +81,7 @@ class Transaction extends Model
 
     private static function _isTransactionCodeExist($transactionCode)
     {
-        return Transaction::where('code', '=', $transactionCode)->exist();
+        return Transaction::where('code', $transactionCode)->count() > 0;
     }
 
     public function isPaid()
@@ -132,22 +116,19 @@ class Transaction extends Model
     {
         return $this->status ==self::RETURNED;
     }
-    
-    public function  user()
+
+    public function buyer()
     {
-        return $this->belongsTo(User::class,'user_id','id');
-    }
-    public function payment()
-    {
-        return $this->belongsTo(PaymentMethod::class,'pay_method_id','id');
-    }
-    public function details()
-    {
-        return $this->hasMany(TransactionDetail::class,'transaction_id', 'id');
-    } 
-    public function store()
-    {
-        return $this->belongsTo(Store::class,'store_id','id');
+        return $this->belongsTo(User::class, 'buyer_id');
     }
 
+    public function address()
+    {
+        return $this->belongsTo(Address::class);
+    }
+
+    public function store_transactions()
+    {
+        return $this->hasMany(StoreTransaction::class);
+    }
 }

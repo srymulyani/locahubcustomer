@@ -75,6 +75,7 @@ Route::middleware('auth:sanctum')->group (function () {
     // NEW TRANSACTION
     Route::get('/transaction', [TransactionController::class, 'index']);
     Route::get('/transaction/{transaction}', [TransactionController::class, 'show']);
+    Route::post('/transaction', [TransactionController::class, 'store']);
 
     // CART
     Route::get('/cart', [CartController::class, 'index']);
