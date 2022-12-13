@@ -47,7 +47,7 @@ class RajaOngkirController extends Controller
         $products = Product::whereIn('id', $product_ids)->get();
         $weight = 0;
         foreach ($products as $product) {
-            $key = array_search(1, array_column($request->products, 'product_id'));
+            $key = array_search($product->id, array_column($request->products, 'product_id'));
             $quantity = $request->products[$key]['quantity'];
 
             $weight = $weight + ($product->weight * $quantity);
