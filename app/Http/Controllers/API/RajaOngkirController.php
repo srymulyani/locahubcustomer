@@ -3,12 +3,73 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\{City, Province};
+use App\Models\{Address, City, Product, Province};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class RajaOngkirController extends Controller
 {
+    public function check(Request $request)
+    {
+        $request->validate([
+            'address_id' => 'required|exists:address,id',
+            'courier' => 'required|in:jne,pos,tiki',
+            'products' => 'required|array|min:1',
+            'products.*' => 'required|array|min:2|max:2',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.quantity' => 'required|numeric|min:1',
+        ],[
+            'products.required' => 'Pilih produk !',
+            'products.array' => 'Produk tidak valid !',
+            'products.min' => 'Pilih produk !',
+            'products.*.required' => 'Pilih produk !',
+            'products.*.array' => 'Produk tidak valid !',
+            'products.*.min' => 'Pilih produk !',
+            'products.*.product_id.required' => 'Pilih produk !',
+            'products.*.product_id.exists' => 'Produk tidak ditemukan !',
+            'products.*.quantity.required' => 'Pilih jumlah produk !',
+            'products.*.quantity.numeric' => 'Jumlah produk tidak valid !',
+            'products.*.quantity.min' => 'Jumlah produk minimal 1 !',
+        ]);
+
+        $product_ids = array_column($request->products, 'product_id');
+        $store_count = Product::whereIn('id', $product_ids)->distinct('store_id')->count('store_id');
+
+        if($store_count != 1){
+            return response([
+                'message' => 'The given data was invalid.',
+                'errors' => [
+                    'products' => 'Products must be from the same store !'
+                ]
+            ], 422);
+        }
+
+        $products = Product::whereIn('id', $product_ids)->get();
+        $weight = 0;
+        foreach ($products as $product) {
+            $key = array_search(1, array_column($request->products, 'product_id'));
+            $quantity = $request->products[$key]['quantity'];
+
+            $weight = $weight + ($product->weight * $quantity);
+        }
+
+        $origin = Address::find($request->address_id)->city_id;
+        $destination = $products[0]->store->city_id;
+        
+        $response = Http::post('https://api.rajaongkir.com/starter/cost', [
+            'key' => env('RAJA_ONGKIR_KEY'),
+            'origin' => $origin,
+            'destination' => $destination,
+            'weight' => $weight,
+            'courier' => $request->courier
+        ]);
+        
+        return response([
+            'success' => true,
+            'response' => json_decode($response)
+        ], 200);
+    }
+
     public function migrate()
     {
         $response = Http::get('https://api.rajaongkir.com/starter/city', [

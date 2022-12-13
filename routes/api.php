@@ -67,12 +67,7 @@ Route::middleware('auth:sanctum')->group (function () {
     Route::post('bank/edit', [AddressController::class, 'edit']);
     Route::delete('bank/{id}', [AddressController::class,'destroy']);
 
-    //TRANSACTION
-    // Route::get('transaction', [TransactionController::class,'all']);
-    // Route::post('checkout', [TransactionController::class,'checkout']);
-    // Route::post('edit/transaction',[TransactionController::class,'edit']);
-
-    // NEW TRANSACTION
+    // TRANSACTION
     Route::get('/transaction', [TransactionController::class, 'index']);
     Route::get('/transaction/{transaction}', [TransactionController::class, 'show']);
     Route::post('/transaction', [TransactionController::class, 'store']);
@@ -109,7 +104,8 @@ Route::middleware('auth:sanctum')->group (function () {
     Route::delete('category/{id}', [ProductCategoryController::class,'delete']);
 });
 
-// Raja Ongkir
+// Shipment
+Route::post('/raja-ongkir/check', [RajaOngkirController::class, 'check']);
 Route::get('/raja-ongkir-migrate', [RajaOngkirController::class, 'migrate']);
 // Midtrans
 Route::get('/midtrans/notification', [MidtransController::class, 'receive']);

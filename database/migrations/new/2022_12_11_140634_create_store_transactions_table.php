@@ -19,7 +19,7 @@ class CreateStoreTransactionsTable extends Migration
             $table->foreignId('transaction_id')->references('id')->on('transaction')->onDelete('cascade');
             $table->enum('status', ['menunggu pembayaran','menunggu konfirmasi','diproses','dikirim','selesai','dibatalkan'])->default('menunggu pembayaran');
             $table->integer('total')->default(0);
-            $table->integer('shipping_price')->nullable();
+            $table->integer('shipping_cost')->nullable();
             $table->string('cancellation_note')->nullable();
             $table->timestamps();
         });

@@ -14,7 +14,7 @@ class StoreTransaction extends Model
         'transaction_id',
         'status',
         'total',
-        'shipping_price',
+        'shipping_cost',
         'cancellation_note',
     ];
 
