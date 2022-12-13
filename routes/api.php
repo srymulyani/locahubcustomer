@@ -9,7 +9,7 @@ use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\ProductCategoryController;
 use App\Http\Controllers\API\EmailVerificationController;
-use App\Http\Controllers\API\{CartController, TransactionController};
+use App\Http\Controllers\API\{CartController, MidtransController, RajaOngkirController, TransactionController};
 use App\Http\Controllers\API\StoreController;
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\API\ProductRatingController;
@@ -109,6 +109,7 @@ Route::middleware('auth:sanctum')->group (function () {
     Route::delete('category/{id}', [ProductCategoryController::class,'delete']);
 });
 
-
-
-
+// Raja Ongkir
+Route::get('/raja-ongkir-migrate', [RajaOngkirController::class, 'migrate']);
+// Midtrans
+Route::get('/midtrans/notification', [MidtransController::class, 'receive']);
