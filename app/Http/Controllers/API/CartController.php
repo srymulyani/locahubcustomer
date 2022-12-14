@@ -42,7 +42,7 @@ class CartController extends Controller
                         "Variasi Produk tidak valid !"
                     ]
                 ]
-            ], 406);
+            ], 422);
         }
 
         $cart = Cart::firstOrNew([
@@ -57,6 +57,28 @@ class CartController extends Controller
         return response([
             'success' => true,
             'message' => 'Data successfully stored'
+        ], 200);
+   }
+
+   public function decrease(Cart $cart)
+   {
+        if ($cart->quantity == 1) {
+            return response([
+                "message" => "The given data was invalid.",
+                "errors"=> [
+                    "quantity" => [
+                        "Jumlah produk tidak bisa kurang dari 1 !"
+                    ]
+                ]
+            ], 422);
+        }
+
+        $cart->quantity = $cart->quantity-1;
+        $cart->save();
+
+        return response([
+            'success' => true,
+            'message' => 'Data updated successfully'
         ], 200);
    }
 
