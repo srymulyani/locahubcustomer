@@ -108,4 +108,4 @@ Route::middleware('auth:sanctum')->group (function () {
 Route::post('/raja-ongkir/check', [RajaOngkirController::class, 'check']);
 Route::get('/raja-ongkir-migrate', [RajaOngkirController::class, 'migrate']);
 // Midtrans
-Route::get('/midtrans/notification', [MidtransController::class, 'receive']);
+Route::get('/midtrans-notification', [MidtransController::class, 'receive']);

@@ -18,22 +18,22 @@ class MidtransController extends Controller
             $transaction = $callback->getTransaction();
  
             if ($callback->isSuccess()) {
-                Transaction::where('id', $transaction->id)->update([
+                Transaction::where('code', $transaction->code)->update([
                     'payment_status' => 'dibayar',
                 ]);
-                StoreTransaction::where('transaction_id', $transaction->id)->update([
+                StoreTransaction::where('transaction_code', $transaction->code)->update([
                     'status' => 'menunggu konfirmasi'
                 ]);
             }
  
             if ($callback->isExpire()) {
-                Transaction::where('id', $transaction->id)->update([
+                Transaction::where('code', $transaction->code)->update([
                     'payment_status' => 'expired',
                 ]);
             }
  
             if ($callback->isCancelled()) {
-                Transaction::where('id', $transaction->id)->update([
+                Transaction::where('code', $transaction->code)->update([
                     'payment_status' => 'dibatalkan',
                 ]);
             }

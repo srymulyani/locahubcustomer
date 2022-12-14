@@ -32,4 +32,9 @@ class StoreTransaction extends Model
     {
         return $this->hasMany(StoreTransactionItem::class);
     }
+
+    public function shipment()
+    {
+        return $this->hasOne(StoreTransactionShipment::class);
+    }
 }

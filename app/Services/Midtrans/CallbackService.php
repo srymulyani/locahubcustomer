@@ -55,11 +55,11 @@ class CallbackService extends Midtrans
  
     protected function _createLocalSignatureKey()
     {
-        $transaction_id = $this->transaction->id;
+        $transaction_code = $this->transaction->code;
         $statusCode = $this->notification->status_code;
         $grossAmount = $this->transaction->grand_total.'.00';
         $serverKey = $this->serverKey;
-        $input = $transaction_id . $statusCode . $grossAmount . $serverKey;
+        $input = $transaction_code . $statusCode . $grossAmount . $serverKey;
         $signature = openssl_digest($input, 'sha512');
  
         return $signature;
