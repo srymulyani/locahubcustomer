@@ -24,7 +24,7 @@ class CreateVouchersTable extends Migration
             $table->float('quota');
             $table->longText('description');
             $table->string('status');
-            $table->boolean('choice')->default('false');
+            $table->boolean('choice')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });
