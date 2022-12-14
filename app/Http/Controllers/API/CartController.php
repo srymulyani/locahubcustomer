@@ -34,7 +34,7 @@ class CartController extends Controller
         ]);
 
         $product_variation = ProductVariation::find($request->variation_id);
-        if($product_variation->product_id != $request->product_id){
+        if($product_variation && $product_variation->products_id != $request->product_id){
             return response([
                 "message" => "The given data was invalid.",
                 "errors"=> [
@@ -56,12 +56,24 @@ class CartController extends Controller
 
         return response([
             'success' => true,
+            'cart' => $cart,
             'message' => 'Data successfully stored'
         ], 200);
    }
 
    public function decrease(Cart $cart)
    {
+        if(auth()->user()->id != $cart->user_id){
+            return response([
+                "message" => "The given data was invalid.",
+                "errors"=> [
+                    "permission" => [
+                        "Anda tidak bisa mengubah data ini !"
+                    ]
+                ]
+            ], 422);
+        }
+
         if ($cart->quantity == 1) {
             return response([
                 "message" => "The given data was invalid.",
