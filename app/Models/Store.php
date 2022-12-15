@@ -53,7 +53,7 @@ class Store extends Model
         return $this->hasMany(Product::class);
     }
 
-    public function cart_products()
+    public function carts()
     {
         return $this->hasManyThrough(Cart::class, Product::class);
     }

@@ -11,13 +11,13 @@ class CartController extends Controller
     public function index()
    {
 		// $carts = Cart::select('quantity','product_id')->with('product.store')->where('user_id', auth()->user()->id)->get()->groupBy('product.store.username');
-        $carts = Store::with('cart_products.product','cart_products.variation')->whereHas('cart_products', function($q){
-            $q->where('user_id', auth()->user()->id);
-        })->get();
+        $carts = Store::with('carts.product','carts.variation')->with(['carts' => function($query){
+            $query->where('user_id', auth()->user()->id);
+        }])->get();
 
         return response([
             "success" => true,
-            "carts" => $carts,
+            "cart_store" => $carts,
 			"message" => "Data successfully retrieved"
         ], 200);
    }
