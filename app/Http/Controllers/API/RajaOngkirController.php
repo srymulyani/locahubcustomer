@@ -53,8 +53,8 @@ class RajaOngkirController extends Controller
             $weight = $weight + ($product->weight * $quantity);
         }
 
-        $origin = Address::find($request->address_id)->city_id;
-        $destination = $products[0]->store->city_id;
+        $origin = $products[0]->store->city_id;
+        $destination = Address::find($request->address_id)->city_id;
         
         $response = Http::post('https://api.rajaongkir.com/starter/cost', [
             'key' => env('RAJA_ONGKIR_KEY'),
