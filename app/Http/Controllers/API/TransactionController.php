@@ -74,18 +74,25 @@ class TransactionController extends Controller
         ]);
 
         // GET PRODUCTS BASED ON REQUEST PRODUCT ID
-        $product_ids = array_column($request->products, 'product_id');
-        $products = Product::whereIn('id', $product_ids)->get();
+        // $product_ids = array_column($request->products, 'product_id');
+        // $products = Product::whereIn('id', $product_ids)->get();
 
         // CALCULATE TOTAL WEIGHTS FOR EVERY STORE TRANSACTION
         $weights = [];
-        foreach ($products as $product) {
+        foreach ($request->products as $request_product) {
+            $product = Product::find($request_product['product_id']);
+
             $key = array_search($product->id, array_column($request->products, 'product_id'));
             $quantity = $request->products[$key]['quantity'];
-            
-            $weights = [$product->store_id => (isset($weights[$product->store_id]) ? $weights[$product->store_id] : 0) + ($product->weight * $quantity)] ;
-        }
 
+            if (isset($weights[$product->store_id])) {
+                $weights[$product->store_id] = $weights[$product->store_id] + ($product->weight * $quantity);
+            }else{
+                $weights[$product->store_id] = $product->weight * $quantity ;
+
+            }
+        }
+        
         // GET SHIPMENT COST FOR EVERY STORE TRANSACTION FROM RAJAONGKIR
         $destination = Address::find($request->address_id)->city_id;
         foreach ($weights as $store_id => $weight) {
@@ -113,7 +120,9 @@ class TransactionController extends Controller
         ]);
 
         // CREATE STORE TRANSACTION AND THE ITEMS
-        foreach ($products as $key => $product) {
+        foreach ($request->products as $key => $request_product) {
+            $product = Product::find($request_product['product_id']);
+            
             $store_transaction = StoreTransaction::updateOrCreate([
                 'store_id' => $product->store_id,
                 'transaction_id' => $transaction->id,
