@@ -20,7 +20,7 @@ class TransactionController extends Controller
 		$keyword = $request->keyword ? $request->keyword : null;
 
 		if($keyword){
-            $transaction = $transaction->where("code", "like", "%$keyword%")
+            $transactions = $transactions->where("code", "like", "%$keyword%")
                 ->orWhere("invoice", "like", "%$keyword%")
                 ->orWhere("status", "like", "%$keyword%");
         }

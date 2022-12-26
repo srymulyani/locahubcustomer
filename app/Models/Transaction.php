@@ -89,10 +89,10 @@ class Transaction extends Model
         return $this->status == self::PAID;
     }
 
-    public function isCreated()
-    {
-        return $this->status ==self::CREATED;
-    }
+    // public function isCreated()
+    // {
+    //     return $this->status ==self::CREATED;
+    // }
 
     public function isConfirmed()
     {
