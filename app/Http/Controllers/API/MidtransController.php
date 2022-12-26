@@ -18,10 +18,10 @@ class MidtransController extends Controller
             $transaction = $callback->getTransaction();
  
             if ($callback->isSuccess()) {
-                Transaction::where('code', $transaction->code)->update([
+                $transaction = Transaction::where('code', $transaction->code)->update([
                     'payment_status' => 'dibayar',
                 ]);
-                StoreTransaction::where('transaction_code', $transaction->code)->update([
+                $transaction->store_transactions->update([
                     'status' => 'menunggu konfirmasi'
                 ]);
             }
