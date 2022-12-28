@@ -15,7 +15,7 @@ class TransactionController extends Controller
 {
    public function index(Request $request)
    {
-		$transactions = Transaction::with(['buyer', 'store_transactions', 'store_transactions.items', 'address'])->where('buyer_id', auth()->user()->id);
+		$transactions = Transaction::with(['buyer', 'store_transactions', 'store_transactions.store', 'store_transactions.items', 'address'])->where('buyer_id', auth()->user()->id);
 		$limit = $request->limit ? intval($request->limit) : 10;
 		$keyword = $request->keyword ? $request->keyword : null;
 
