@@ -18,11 +18,18 @@ class TransactionController extends Controller
 		$transactions = Transaction::with(['buyer', 'store_transactions', 'store_transactions.store', 'store_transactions.items', 'address'])->where('buyer_id', auth()->user()->id);
 		$limit = $request->limit ? intval($request->limit) : 10;
 		$keyword = $request->keyword ? $request->keyword : null;
+		$status = $request->status ? $request->status : null;
 
 		if($keyword){
             $transactions = $transactions->where("code", "like", "%$keyword%")
                 ->orWhere("invoice", "like", "%$keyword%")
                 ->orWhere("status", "like", "%$keyword%");
+        }
+
+        if($status && in_array($status, ['menunggu konfirmasi', 'diproses', 'dikirim', 'selesai', 'dibatalkan', 'menunggu pembayaran', 'expired'])){
+            $transactions = $transactions->whereHas('store_transactions', function($q) use($status){
+                $q->where('status', $status);
+            });
         }
 
 		if($limit == -1){
