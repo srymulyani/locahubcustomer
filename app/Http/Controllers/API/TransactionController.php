@@ -167,8 +167,9 @@ class TransactionController extends Controller
         }
 
         // UPDATE GRAND TOTAL TRANSACTION AFTER UPDATING TOTAL PER STORE TRANSACTION
-        $grand_total = StoreTransaction::where('transaction_id', $transaction->id)->sum('total');
-        $transaction->grand_total = $grand_total;
+        $total = StoreTransaction::where('transaction_id', $transaction->id)->sum('total');
+        $shipping_cost = StoreTransaction::where('transaction_id', $transaction->id)->sum('shipping_cost');
+        $transaction->grand_total = $total + $shipping_cost;
         $transaction->save();
 
         // CREATE SNAP TOKEN FOR MIDTRANS
