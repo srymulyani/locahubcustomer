@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Transaction};
+use App\Models\{StoreTransaction, Transaction};
 use Illuminate\Http\Request;
 use App\Services\Midtrans\CallbackService;
 
@@ -16,12 +16,13 @@ class MidtransController extends Controller
         if ($callback->isSignatureKeyVerified()) {
             $notification = $callback->getNotification();
             $transaction = $callback->getTransaction();
- 
+            
             if ($callback->isSuccess()) {
-                $transaction = Transaction::where('code', $transaction->code)->update([
+                Transaction::where('code', $transaction->code)->update([
                     'payment_status' => 'dibayar',
                 ]);
-                $transaction->store_transactions->update([
+                
+                StoreTransaction::where('transaction_id', $transaction->id)->update([
                     'status' => 'menunggu konfirmasi'
                 ]);
             }
@@ -30,11 +31,19 @@ class MidtransController extends Controller
                 Transaction::where('code', $transaction->code)->update([
                     'payment_status' => 'expired',
                 ]);
+                
+                StoreTransaction::where('transaction_id', $transaction->id)->update([
+                    'status' => 'expired'
+                ]);
             }
  
             if ($callback->isCancelled()) {
                 Transaction::where('code', $transaction->code)->update([
                     'payment_status' => 'dibatalkan',
+                ]);
+                
+                StoreTransaction::where('transaction_id', $transaction->id)->update([
+                    'status' => 'dibatalkan'
                 ]);
             }
  
