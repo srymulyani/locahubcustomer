@@ -11,6 +11,7 @@ class StoreTransactionItem extends Model
 
     protected $fillable = [
         'store_transaction_id',
+        'name',
         'product',
         'variation',
         'price',
