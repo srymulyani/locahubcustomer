@@ -35,6 +35,9 @@ class StoreController extends Controller
         try {
                $validator= Validator::make($request->all(),[
                 'user_id'=> 'required',
+                // 'couriers_id' => 'required',
+                // 'day_id' => 'required',
+                // 'city_id' => 'required',
                 'name' => 'required|string',
                 'username' => 'required|string',
                 'addres' =>'required|string',
@@ -52,6 +55,9 @@ class StoreController extends Controller
 
             $store=Store::create([
                 'user_id'=>$request->user_id,
+                // 'couriers_id' => $request -> couriers_id,
+                // 'day_id' => $request -> day_id,
+                // 'city_id' => $request -> city_id,
                 'name' =>$request->name,
                 'username' =>$request->username,
                 'addres' => $request->addres,

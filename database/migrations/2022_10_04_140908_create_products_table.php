@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
             $table->float('price');
             $table->string('products_information');
             $table->bigInteger('categories_id');
-            $table->bigInteger('stores_id');
+            $table->bigInteger('store_id');
             $table->string('tags')->nullable();
             $table->string('height');
             $table->string('wide');

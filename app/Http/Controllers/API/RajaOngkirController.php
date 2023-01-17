@@ -57,7 +57,7 @@ class RajaOngkirController extends Controller
         $destination = Address::find($request->address_id)->city_id;
         
         $response = Http::post('https://api.rajaongkir.com/starter/cost', [
-            'key' => env('RAJA_ONGKIR_KEY'),
+            'key' => env('RAJAONGKIR_API_KEY'),
             'origin' => $origin,
             'destination' => $destination,
             'weight' => $weight,
@@ -73,7 +73,7 @@ class RajaOngkirController extends Controller
     public function migrate()
     {
         $response = Http::get('https://api.rajaongkir.com/starter/city', [
-            'key' => env('RAJA_ONGKIR_KEY')
+            'key' => env('RAJAONGKIR_API_KEY')
         ]);
 
         foreach ($response['rajaongkir']['results'] as $city) {

@@ -107,7 +107,7 @@ class TransactionController extends Controller
             $origin[$store_id] = Store::find($store_id)->city_id;
             
             $response = Http::post('https://api.rajaongkir.com/starter/cost', [
-                'key' => env('RAJA_ONGKIR_KEY'),
+                'key' => env('RAJAONGKIR_API_KEY'),
                 'origin' => $origin[$store_id],
                 'destination' => $destination,
                 'weight' => $weight,
