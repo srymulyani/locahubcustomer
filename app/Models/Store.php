@@ -22,6 +22,7 @@ class Store extends Model
         'user_id',
         'couriers_id',
         'day_id',
+        'city_id',
         'name',
         'profile',
         'image',
@@ -35,6 +36,11 @@ class Store extends Model
     public function courier ()
     {
         return $this->hasMany(Courier::class,'couriers_id','id');
+    }
+
+    public function city()
+    {
+        return $this->hasOne(City::class, 'city_id', 'id');
     }
     public function bank(){
         return $this->hasMany(Bank::class,'store_id', 'id');

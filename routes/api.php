@@ -7,6 +7,7 @@ use App\Http\Controllers\API\AddressController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ForgotPasswordController;
+use App\Http\Controllers\API\ProductGalleryController;
 use App\Http\Controllers\API\ProductCategoryController;
 use App\Http\Controllers\API\EmailVerificationController;
 use App\Http\Controllers\API\{CartController, MidtransController, RajaOngkirController, TransactionController};
@@ -14,6 +15,7 @@ use App\Http\Controllers\API\StoreController;
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\API\ProductRatingController;
 use App\Http\Controllers\API\ProductRatingGalleryController;
+use App\Models\ProductGallery;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +37,9 @@ Route::get('products',[ProductController::class,'all']);
 Route::post('products', [ProductController::class,'create']);
 Route::post('updateProducts', [ProductController::class,'updateAll']);
 Route::delete('products/{id}', [ProductController::class,'delete']);
+
+//PRODUCT GALLERY
+Route::post('upload', [ProductGalleryController::class, 'upload']);
 
 
 //PRODUCTS CATEGORY

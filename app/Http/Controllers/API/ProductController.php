@@ -98,7 +98,7 @@ class ProductController extends Controller
                 $validator= Validator::make($request->all(),[
                 'user_id' => 'required',
                 'name' => 'required|string|max:255',
-                'price' => 'required',
+                'price' => 'required|string',
                 'products_information' => 'required|string',
                 'categories_id' =>'required',
                 'store_id' => 'required',
@@ -208,55 +208,6 @@ class ProductController extends Controller
         };
     }
     public function updateAll(Request $request){
-
-    //         if ($request->hasFile('image1')) {
-    //             $image = new ProductGallery();
-    //             $image->products_id = $product->id;
-    //             $path = $request->file('image1')->store('productGalleries');
-    //             $image->url = $path;
-    //             $image->save();
-    //         }
-
-    //         if ($request->hasFile('image2')) {
-    //             $image = new ProductGallery();
-    //             $image->products_id = $product->id;
-    //             $path = $request->file('image2')->store('productGalleries');
-    //             $image->url = $path;
-    //             $image->save();
-    //         }
-
-    //         if ($request->hasFile('image3')) {
-    //             $image = new ProductGallery();
-    //             $image->products_id = $product->id;
-    //             $path = $request->file('image3')->store('productGalleries');
-    //             $image->url = $path;
-    //             $image->save();
-    //         }
-
-    //         if ($request->hasFile('image4')) {
-    //             $image = new ProductGallery();
-    //             $image->products_id = $product->id;
-    //             $path = $request->file('image4')->store('productGalleries');
-    //             $image->url = $path;
-    //             $image->save();
-    //         }
-
-    //         if ($request->hasFile('image5')) {
-    //             $image = new ProductGallery();
-    //             $image->products_id = $product->id;
-    //             $path = $request->file('image5')->store('productGalleries');
-    //             $image->url = $path;
-    //             $image->save();
-    //         }
-
-    //         if ($request->hasFile('image6')) {
-    //             $image = new ProductGallery();
-    //             $image->products_id = $product->id;
-    //             $path = $request->file('image6')->store('productGalleries');
-    //             $image->url = $path;
-    //             $image->save();
-    //         }
-
         try {
 
         $request->all();
