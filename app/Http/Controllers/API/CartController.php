@@ -11,7 +11,7 @@ class CartController extends Controller
     public function index()
    {
 		// $carts = Cart::select('quantity','product_id')->with('product.store')->where('user_id', auth()->user()->id)->get()->groupBy('product.store.username');
-        $carts = Store::with(['carts.product','carts.variation','carts' => function($query){
+        $carts = Store::with(['carts.product','carts.product.galleries','carts.variation','carts' => function($query){
             $query->where('user_id', auth()->user()->id);
         }])->whereHas('carts', function($q) {
             $q->where('user_id', auth()->user()->id);
