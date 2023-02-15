@@ -25,8 +25,9 @@ class ProductRating extends Model
         'url_image',
     ];
 
-    public function getStatusAttribute(){
-        return $this->attributes['status'] == 0 ? 'Inactive' : 'Active';
+   public function getUrlAttribute($url_image)
+    {
+        return config('app.url') . Storage::url($url_image);
     }
 
     public function user(){

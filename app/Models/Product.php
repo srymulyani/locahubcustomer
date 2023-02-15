@@ -48,10 +48,6 @@ class Product extends Model
     {
         return $this->belongsTo(Store::class);
     }
-    public function rating_galleries()
-    {
-        return $this->hasMany(ProductRatingGallery::class,'products_id','id');
-    }
 
     public function carts()
     {

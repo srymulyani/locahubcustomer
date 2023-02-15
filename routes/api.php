@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\AddressController;
@@ -38,9 +39,10 @@ Route::post('products', [ProductController::class,'create']);
 Route::post('updateProducts', [ProductController::class,'updateAll']);
 Route::delete('products/{id}', [ProductController::class,'delete']);
 
+
 //PRODUCT GALLERY
 Route::post('upload', [ProductGalleryController::class, 'upload']);
-
+Route::get('image/{path}', [ProductGalleryController::class, 'getImage'])->where('path', '.*');
 
 //PRODUCTS CATEGORY
 Route::get('category',[ProductCategoryController::class,'all']);
@@ -55,7 +57,7 @@ Route::post('reset-password', [ForgotPasswordController::class,'reset']);
 
 
 Route::middleware('auth:sanctum')->group (function () {
-    Route::get('user',  [UserController::class, 'fetch'])->middleware('verified');
+    Route::get('user',  [UserController::class, 'fetch']);
     Route::post('user',[UserController::class,'updateProfile']);
     Route::post('logout',[UserController::class,'logout']);
     Route::post('changePassword', [UserController::class, 'changePassword']);
@@ -113,5 +115,7 @@ Route::middleware('auth:sanctum')->group (function () {
 // Shipment
 Route::post('/raja-ongkir/check', [RajaOngkirController::class, 'check']);
 Route::get('/raja-ongkir-migrate', [RajaOngkirController::class, 'migrate']);
+Route::get('/raja-ongkir-city', [RajaOngkirController::class, 'fetchCity']);
+Route::get('/raja-ongkir-province', [RajaOngkirController::class, 'fetchProvinces']);
 // Midtrans
 Route::post('/midtrans-notification', [MidtransController::class, 'receive']);
