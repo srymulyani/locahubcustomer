@@ -16,7 +16,7 @@ class ProductGalleryController extends Controller
              if ($request->hasFile('image1')) {
                 $image = new ProductGallery();
                 $image->products_id = $request->id;
-                $path = $request->file('image1')->store('productGalleries');
+                $path = $request->file('image1')->store('image');
                 $image->url = $path;
                 $image->save();
             }
@@ -24,7 +24,7 @@ class ProductGalleryController extends Controller
             if ($request->hasFile('image2')) {
                 $image = new ProductGallery();
                 $image->products_id = $request->id;
-                $path = $request->file('image2')->store('productGalleries');
+                $path = $request->file('image2')->store('image');
                 $image->url = $path;
                 $image->save();
             }
