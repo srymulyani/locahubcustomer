@@ -16,7 +16,7 @@ use App\Http\Controllers\API\StoreController;
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\API\ProductRatingController;
 use App\Http\Controllers\API\ProductRatingGalleryController;
-use App\Models\ProductGallery;
+use App\Http\Controllers\API\FavoriteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,14 +39,17 @@ Route::post('products', [ProductController::class,'create']);
 Route::post('updateProducts', [ProductController::class,'updateAll']);
 Route::delete('products/{id}', [ProductController::class,'delete']);
 
+//FAVORITE PRODUCTS
+
+Route::get('favorites',[FavoriteController::class,'index']);
+Route::post('favorites', [FavoriteController::class,'store']);
+Route::delete('favorites/{id}', [FavoriteController::class,'destroy']);
 
 //PRODUCT GALLERY
 Route::post('upload', [ProductGalleryController::class, 'upload']);
-Route::get('image/{path}', [ProductGalleryController::class, 'getImage'])->where('path', '.*');
 
 //PRODUCTS CATEGORY
 Route::get('category',[ProductCategoryController::class,'all']);
-
 
 //USER
 Route::post('register',[UserController::class,'register']);

@@ -100,56 +100,63 @@ class RajaOngkirController extends Controller
     }
 
     public function fetchCity(Request $request){
-         $id =$request->input('id');
-         $province_id = $request->province_id;
-         $name= $request->name;
-         $type= $request->type;
-         $postal_code= $request->postal_code;
+        $cities = City::all();
+        return response()->json([
+            'status' => 'success',
+            'data' => $cities
+        ]);
+        //  $id =$request->input('id');
+        //  $province_id = $request->province_id;
+        //  $name= $request->name;
+        //  $type= $request->type;
+        //  $postal_code= $request->postal_code;
 
-         if($id) //Ambil data berdasarkan ID
-        {
-            $city =City::where('id', $id)->first();
-            if($city)
-            {
-                return ResponseFormatter::success(  
-                    $city,
-                    'Data Kota berhasil diambil'     
-                );        
+        //  if($id) //Ambil data berdasarkan ID
+        // {
+        //     $city =City::where('id', $id)->first();
+        //     if($city)
+        //     {
+        //         return ResponseFormatter::success(  
+        //             $city,
+        //             'Data Kota berhasil diambil'     
+        //         );        
           
-            }
-            else {
-                return ResponseFormatter::error(
-                    null,
-                    'Data kota tidak dapat di Tampilkan',
-                    404
-                );
-            }
+        //     }
+        //     else {
+        //         return ResponseFormatter::error(
+        //             null,
+        //             'Data kota tidak dapat di Tampilkan',
+        //             404
+        //         );
+        //     }
         }
 
-
-    }
     public function fetchProvinces(Request $request){
-        $id =$request->input('id');
+        // $id =$request->input('id');
     
-         if($id) //Ambil data berdasarkan ID
-        {
-            $province =Province::where('id', $id)->first();
-            if($province)
-            {
-                return ResponseFormatter::success(  
-                    $province,
-                    'Data provinsi berhasil diambil'     
-                );        
+        //  if($id) //Ambil data berdasarkan ID
+        // {
+        //     $province =Province::where('id', $id)->first();
+        //     if($province)
+        //     {
+        //         return ResponseFormatter::success(  
+        //             $province,
+        //             'Data provinsi berhasil diambil'     
+        //         );        
           
-            }
-            else {
-                return ResponseFormatter::error(
-                    null,
-                    'Data provinsi tidak dapat di Tampilkan',
-                    404
-                );
-            }
-        }
-
+        //     }
+        //     else {
+        //         return ResponseFormatter::error(
+        //             null,
+        //             'Data provinsi tidak dapat di Tampilkan',
+        //             404
+        //         );
+        //     }
+        // }
+       $provinces = Province::all();
+       return response()->json([
+        'status' => 'success',
+        'data' => $provinces
+       ]);     
     }
 }

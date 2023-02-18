@@ -101,4 +101,9 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->notify(new MailResetPasswordNotification($url));
     }
 
+    public function favorites()
+    {
+        return $this->hasMany(Favorites::class,'user_id','id');
+    }
+
 }
