@@ -20,9 +20,11 @@ class ProductGallery extends Model
         'products_id',
         'url',
     ];
-    public function getUrlAttribute($url)
+
+    public function getUrlAttribute()
     {
-        return config('app.url') . Storage::url($url);
+        if (!$this->url) return "";
+        return url($this->url);
     }
 
     public function products(){
