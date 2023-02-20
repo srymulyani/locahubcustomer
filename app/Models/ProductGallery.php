@@ -23,8 +23,8 @@ class ProductGallery extends Model
 
     public function getUrlAttribute()
     {
-        if (!$this->url) return "";
-        return url($this->url);
+        if (!$this->attributes["url"]) return "";
+        return url($this->attributes["url"]);
     }
 
     public function products(){
