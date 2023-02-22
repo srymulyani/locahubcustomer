@@ -15,6 +15,10 @@ class StoreController extends Controller
 {
         public function show(Request $request){
         $id = $request->id;
+        $limit =$request->input('limit');
+        $city_id = $request->city_id;
+        $name = $request->name;
+
         
         $store = Store::where('id', $id)->find($id);
         if($store){
@@ -29,14 +33,26 @@ class StoreController extends Controller
             );
         }
 
+
+        $store=Store::with(['city'])->first(); 
+
+        if($name){
+             $store->where('store.name','like', '%' .$name. '%');
+        }
+        if($city_id){
+            $store->where('city_id','=', $city_id);
+        }
+        return ResponseFormatter::success(
+        $store->paginate($limit),
+        'Data Produk Berhasil Diambil'
+    );
+
 }
 
     public function create(Request $request){
         try {
                $validator= Validator::make($request->all(),[
                 'user_id'=> 'required',
-                // 'couriers_id' => 'required',
-                // 'day_id' => 'required',
                 'city_id' => 'required',
                 'name' => 'required|string',
                 'username' => 'required|string',
@@ -55,8 +71,6 @@ class StoreController extends Controller
 
             $store=Store::create([
                 'user_id'=>$request->user_id,
-                // 'couriers_id' => $request -> couriers_id,
-                // 'day_id' => $request -> day_id,
                 'city_id' => $request -> city_id,
                 'name' =>$request->name,
                 'username' =>$request->username,

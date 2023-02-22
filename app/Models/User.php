@@ -93,15 +93,17 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(BankAccount::class,'user_id','id');
     }
 
-    // public function setPasswordAttribute($value){
-    //     $this->attributes['password'] = Hash::make($value);
-    // }
     public function sendPasswordResetNotification($token)
     {
         // $this->clientBaseUrl
         $url = 'https://spa.test/reset-password?token='.$token;
 
         $this->notify(new MailResetPasswordNotification($url));
+    }
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorites::class,'user_id','id');
     }
 
 }

@@ -31,7 +31,7 @@ class ProductRatingController extends Controller
     }
 
       if($products_id){
-        $review = ProductRating::where('products_id', $products_id)->first();
+        $review = ProductRating::where('products_id' , $products_id)->first();
            if($review){
              return ResponseFormatter::success(
                 $review,
@@ -53,6 +53,7 @@ class ProductRatingController extends Controller
                 'products_id' => 'required',
                 'content' => 'required|string',
                 'rating' => 'required',
+                'url_image' => 'required|image|max:2048',
             ]);
                 if ($validator->fails()){
                      return ResponseFormatter::error([
@@ -60,12 +61,14 @@ class ProductRatingController extends Controller
                     'errors' => $validator->errors()
               ],'Authentication Failed',422);
             }
-
+            $url_image = $request->file('url_image')->store('products_rating');
             $review = ProductRating::create([
                 'user_id' => $request->user_id,
                 'products_id' => $request->products_id,
                 'content' => $request->content,
                 'rating' => $request->rating,
+                'url_image' => $url_image,
+              
             ]);
 
             return ResponseFormatter::success(

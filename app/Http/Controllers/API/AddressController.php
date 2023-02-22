@@ -75,10 +75,7 @@ class AddressController extends Controller
         $user_id = $request->user_id;
         $limit = $request->input('limit');
         $name = $request->input('name');
-        // $start_date = $request->start_date; 
-        // $end_date = $request->end_date; 
-        
-       
+           
         if($id){
             $address =Address::find($id);
             if($address){
@@ -111,7 +108,7 @@ class AddressController extends Controller
     public function edit(Request $request)
     {
         $request->all();
-        $request->user_id = $request->user_id;
+        $request->user_id; //$request->user_id;
         $address = Address::find($request->id);
 
         $address->address_label =  $request->address_label;

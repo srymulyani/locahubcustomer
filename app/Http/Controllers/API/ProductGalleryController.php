@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Models\ProductGallery;
 
@@ -11,62 +13,63 @@ class ProductGalleryController extends Controller
 {
     public function upload(Request $request)
     {
-        if ($request->hasFile('image1')){
-            $image = new ProductGallery();
-            $image->products_id = $request ->id;
-            $path = $request->file('image1')->store('productGalleries');
-            $image->url = $path;
-            $image->save();
-        }
+        
 
-           if ($request->hasFile('image2')){
-            $image = new ProductGallery();
-            $image->products_id = $request ->id;
-            $path = $request->file('image2')->store('productGalleries');
-            $image->url = $path;
-            $image->save();
-        }
+    //     if ($request->hasFile('image1')) {
+    //     $image = new ProductGallery();
+    //     $image->products_id = $request->id;
+    //     $path = $request->file('image1')->store('ProductGalleries');
+    //     $image->url = $path;
+    //     $image->save();
+    // }
 
-           if ($request->hasFile('image3')){
-            $image = new ProductGallery();
-            $image->products_id = $request ->id;
-            $path = $request->file('image3')->store('productGalleries');
-            $image->url = $path;
-            $image->save();
-        }
+    //    if ($request->hasFile('image2')) {
+    //     $image = new ProductGallery();
+    //     $image->products_id = $request->id;
+    //     $path = $request->file('image2')->store('ProductGalleries');
+    //     $image->url = $path;
+    //     $image->save();
+     
+    // }
+    //   return ["result" => $image];
 
-           if ($request->hasFile('image4')){
-            $image = new ProductGallery();
-            $image->products_id = $request ->id;
-            $path = $request->file('image4')->store('productGalleries');
-            $image->url = $path;
-            $image->save();
-        }
+    $productId= $request->id;
+    $images = [];
 
-           if ($request->hasFile('image5')){
-            $image = new ProductGallery();
-            $image->products_id = $request ->id;
-            $path = $request->file('image5')->store('productGalleries');
-            $image->url = $path;
-            $image->save();
-        }
+    $validatedData = $request->validate([
+        'image1' => 'required|mimes:jpg,jpeg,png|max:2048',
+        'image2' => 'nullable|mimes:jpg,jpeg,png|max:2048',
+    ], [
+        'image1.required' => 'The image1 field is required.',
+    ]);
 
-           if ($request->hasFile('image6')){
-            $image = new ProductGallery();
-            $image->products_id = $request ->id;
-            $path = $request->file('image6')->store('productGalleries');
-            $image->url = $path;
-            $image->save();
-        }
+    $product = Product::find($productId);
 
-           if ($request->hasFile('image7')){
-            $image = new ProductGallery();
-            $image->products_id = $request ->id;
-            $path = $request->file('image7')->store('productGalleries');
-            $image->url = $path;
-            $image->save();
-        }
+    if (!$product) {
+        return response()->json(['error' => 'Product not found'], 404);
+    }
 
-        return["result"=> $image];
+    if ($request->hasFile('image1')) {
+        $image = new ProductGallery();
+        $image->products_id = $productId;
+        $path = $request->file('image1')->storeAs('ProductGalleries', $request->file('image1')->getClientOriginalName(),'public');
+        $image->url = 'storage/' . $path;
+        $image->save();
+        $images[] = $image;
+    }
+
+    if ($request->hasFile('image2')) {
+        $image = new ProductGallery();
+        $image->products_id = $productId;
+        $path = $request->file('image2')->storeAs('ProductGalleries', $image,'public');
+        $image->url = 'storage/' . $image;
+        $image->save();
+        $images[] = $image;
+    }
+
+    return response()->json(['result' => $images]);
     }
 }
+
+    
+
