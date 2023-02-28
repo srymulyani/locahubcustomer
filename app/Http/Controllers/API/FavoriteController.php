@@ -8,44 +8,38 @@ use Illuminate\Http\Request;
 
 class FavoriteController extends Controller
 {
-
     //Store favorite products
     public function store(Request $request)
-{
-    $favorite = new Favorite;
-    $favorite->user_id = $request->input('user_id');
-    $favorite->product_id = $request->input('product_id');
-    $favorite->save();
+    {
+        $favorite = new Favorite;
+        $favorite->user_id = $request->input('user_id');
+        $favorite->product_id = $request->input('product_id');
+        $favorite->save();
 
-    return response()->json([
-        'message' => 'Favorite created successfully.'
-    ], 201);
-}
+        return response()->json([
+            'message' => 'Favorite created successfully.'
+        ], 200);
+    }
 
     // Fetch Favorite Products
-
     public function index($user_id)
-{
-    $favorites = Favorite::where('user_id', $user_id)->get();
+    {
+        $favorites = Favorite::where('user_id', $user_id)->get();
 
-    return response()->json($favorites);
-}
+        return response()->json($favorites);
+    }
     //destroy favorite products
-    public function destroy($id){
-    $favorite = Favorite::find($id);
-
-    if (!$favorite) {
+    public function destroy($product_id)
+    {
+        $favorite = Favorite::where('product_id',$product_id)->first();
+        if (!$favorite) {
+            return response()->json([
+                'message' => 'Favorite not found.'
+            ], 404);
+        }
+        $favorite->delete();
         return response()->json([
-            'message' => 'Favorite not found.'
-        ], 404);
+            'message' => 'Favorite deleted successfully.'
+        ]);
     }
-
-    $favorite->delete();
-
-    return response()->json([
-        'message' => 'Favorite deleted successfully.'
-    ]);
-    }
-
-
 }

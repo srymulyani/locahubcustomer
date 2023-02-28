@@ -22,12 +22,13 @@ class ProductRating extends Model
         'products_id',
         'content',
         'rating',
-        'url_image',
+        'url',
     ];
 
-   public function getUrlAttribute($url_image)
+    public function getUrlAttribute()
     {
-        return config('app.url') . Storage::url($url_image);
+        if (!$this->attributes["url"]) return "";
+        return url($this->attributes["url"]);
     }
 
     public function user(){

@@ -67,8 +67,7 @@ class VoucherController extends Controller
         $start_date = $request->start_date;
         $end_date = $request->end_date;
         $store_id = $request->store_id;
-
-
+        
         if($id){
         $vouchers = Voucher::where('id', $id)->find($id);
         if($vouchers)
@@ -108,7 +107,7 @@ class VoucherController extends Controller
             if($vouchers){
                 return ResponseFormatter::success(
                     $vouchers,
-                    'Voucher berhasil diambil ',
+                    'Voucher berhasil diambil',
                 );
             }else{
                   return ResponseFormatter::error(
@@ -131,5 +130,18 @@ class VoucherController extends Controller
                 );
             }
         }
+    }
+
+    public function destroy($id){
+        $voucher = Voucher::find($id);
+        if (!$voucher) {
+            return response()->json([
+                'message' => 'Voucher not found.'
+            ], 404);
+        }
+        $voucher->delete();
+        return response()->json([
+            'message' => 'Voucher deleted successfully.'
+        ]);
     }
 }

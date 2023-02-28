@@ -90,7 +90,6 @@ class ProductController extends Controller
     );
     }
 
-
     public function create(Request $request) 
     {
         try{
@@ -135,54 +134,6 @@ class ProductController extends Controller
                 'status' => $request->status,
             ]);
 
-            
-            if ($request->hasFile('image1')) {
-                $image = new ProductGallery();
-                $image->products_id = $product->id;
-                $path = $request->file('image1')->store('productGalleries');
-                $image->url = $path;
-                $image->save();
-            }
-
-            if ($request->hasFile('image2')) {
-                $image = new ProductGallery();
-                $image->products_id = $product->id;
-                $path = $request->file('image2')->store('productGalleries');
-                $image->url = $path;
-                $image->save();
-            }
-
-            if ($request->hasFile('image3')) {
-                $image = new ProductGallery();
-                $image->products_id = $product->id;
-                $path = $request->file('image3')->store('productGalleries');
-                $image->url = $path;
-                $image->save();
-            }
-
-            if ($request->hasFile('image4')) {
-                $image = new ProductGallery();
-                $image->products_id = $product->id;
-                $path = $request->file('image4')->store('productGalleries');
-                $image->url = $path;
-                $image->save();
-            }
-
-            if ($request->hasFile('image5')) {
-                $image = new ProductGallery();
-                $image->products_id = $product->id;
-                $path = $request->file('image5')->store('productGalleries');
-                $image->url = $path;
-                $image->save();
-            }
-
-            if ($request->hasFile('image6')) {
-                $image = new ProductGallery();
-                $image->products_id = $product->id;
-                $path = $request->file('image6')->store('productGalleries');
-                $image->url = $path;
-                $image->save();
-            }
             foreach ($request->variation as $item) {
                     ProductVariation::create([
                         'products_id' => $product->id,

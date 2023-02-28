@@ -90,7 +90,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function bank_account()
     {
-        return $this->hasMany(BankAccount::class,'user_id','id');
+        return $this->hasMany(BankAccount::class,'users_id','id');
     }
 
     public function sendPasswordResetNotification($token)

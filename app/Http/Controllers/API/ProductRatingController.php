@@ -46,44 +46,48 @@ class ProductRatingController extends Controller
         }
     }
 }
-    public function create(Request $request){
-        try {
-            $validator = Validator::make($request->all(),[
-                'user_id'=>'required',
-                'products_id' => 'required',
-                'content' => 'required|string',
-                'rating' => 'required',
-                'url_image' => 'required|image|max:2048',
-            ]);
-                if ($validator->fails()){
-                     return ResponseFormatter::error([
-                    'message'=>'Validation fails',
-                    'errors' => $validator->errors()
-              ],'Authentication Failed',422);
-            }
-            $url_image = $request->file('url_image')->store('products_rating');
-            $review = ProductRating::create([
-                'user_id' => $request->user_id,
-                'products_id' => $request->products_id,
-                'content' => $request->content,
-                'rating' => $request->rating,
-                'url_image' => $url_image,
-              
-            ]);
-
-            return ResponseFormatter::success(
-                $review,
-                'Terimakasih Telah Memberikan Penilaian'
-            );
-        } catch (\Throwable $th) {
-            return ResponseFormatter::error(
-                [
-                    "message" => "Something went wrong",
-                    "errors" => $th->getMessage()
-                ],
-                "Gagal Memberikan Penilaian", 500
-            );
+    public function create(Request $request)
+{
+    try {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'products_id' => 'required',
+            'content' => 'required|string',
+            'rating' => 'required',
+            'url_image' => 'nullable',
+        ]);
+        if ($validator->fails()) {
+            return ResponseFormatter::error([
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ], 'Validasi Gagal', 422);
         }
 
+        $review = ProductRating::create([
+            'user_id' => $request->user_id,
+            'products_id' => $request->products_id,
+            'content' => $request->content,
+            'rating' => $request->rating,
+        ]);
+
+        if ($request->hasFile('image1')) {
+            $path = $request->file('image1')->storeAs('ProductRating', $request->file('image1')->getClientOriginalName(),'public');
+            $review->url = 'storage/' . $path;
+            $review->save();
+        }
+
+        return ResponseFormatter::success(
+            $review,
+            'Terimakasih Telah Memberikan Penilaian'
+        );
+    } catch (\Throwable $th) {
+        return ResponseFormatter::error(
+            [
+                "message" => "Something went wrong",
+                "errors" => $th->getMessage()
+            ],
+            "Gagal Memberikan Penilaian", 500
+        );
     }
+}
 }

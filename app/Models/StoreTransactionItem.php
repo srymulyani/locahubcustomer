@@ -11,6 +11,7 @@ class StoreTransactionItem extends Model
 
     protected $fillable = [
         'store_transaction_id',
+        'product_id',
         'name',
         'product',
         'variation',
@@ -22,5 +23,10 @@ class StoreTransactionItem extends Model
     public function store_transaction()
     {
         return $this->belongsTo(StoreTransaction::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
     }
 }

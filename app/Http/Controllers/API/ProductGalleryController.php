@@ -14,25 +14,6 @@ class ProductGalleryController extends Controller
     public function upload(Request $request)
     {
         
-
-    //     if ($request->hasFile('image1')) {
-    //     $image = new ProductGallery();
-    //     $image->products_id = $request->id;
-    //     $path = $request->file('image1')->store('ProductGalleries');
-    //     $image->url = $path;
-    //     $image->save();
-    // }
-
-    //    if ($request->hasFile('image2')) {
-    //     $image = new ProductGallery();
-    //     $image->products_id = $request->id;
-    //     $path = $request->file('image2')->store('ProductGalleries');
-    //     $image->url = $path;
-    //     $image->save();
-     
-    // }
-    //   return ["result" => $image];
-
     $productId= $request->id;
     $images = [];
 
@@ -61,8 +42,8 @@ class ProductGalleryController extends Controller
     if ($request->hasFile('image2')) {
         $image = new ProductGallery();
         $image->products_id = $productId;
-        $path = $request->file('image2')->storeAs('ProductGalleries', $image,'public');
-        $image->url = 'storage/' . $image;
+        $path = $request->file('image2')->storeAs('ProductGalleries', $request->file('image2')->getClientOriginalName(),'public');
+        $image->url = 'storage/' . $path;
         $image->save();
         $images[] = $image;
     }

@@ -11,7 +11,7 @@ use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\ProductGalleryController;
 use App\Http\Controllers\API\ProductCategoryController;
 use App\Http\Controllers\API\EmailVerificationController;
-use App\Http\Controllers\API\{CartController, MidtransController, RajaOngkirController, TransactionController};
+use App\Http\Controllers\API\{BankController, CartController, MidtransController, RajaOngkirController, TransactionController};
 use App\Http\Controllers\API\StoreController;
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\API\ProductRatingController;
@@ -41,9 +41,9 @@ Route::delete('products/{id}', [ProductController::class,'delete']);
 
 //FAVORITE PRODUCTS
 
-Route::get('favorites',[FavoriteController::class,'index']);
-Route::post('favorites', [FavoriteController::class,'store']);
-Route::delete('favorites/{id}', [FavoriteController::class,'destroy']);
+Route::get('products-favorites/{user_id}',[FavoriteController::class,'index']);
+Route::post('products-favorites', [FavoriteController::class,'store']);
+Route::delete('delete-favorites/{product_id}', [FavoriteController::class,'destroy']);
 
 //PRODUCT GALLERY
 Route::post('upload', [ProductGalleryController::class, 'upload']);
@@ -72,16 +72,17 @@ Route::middleware('auth:sanctum')->group (function () {
     Route::delete('address/{id}', [AddressController::class,'destroy']);
 
     //BANK
-    Route::post('bank', [AddressController::class,'create']); 
-    Route::get('bank', [AddressController::class,'all']);
-    Route::post('bank/edit', [AddressController::class, 'edit']);
-    Route::delete('bank/{id}', [AddressController::class,'destroy']);
+    Route::post('bank', [BankController::class,'create']); 
+    Route::get('bank', [BankController::class,'all']);
+    Route::post('bank/edit', [BankController::class, 'edit']);
+    Route::delete('bank/{id}', [BankController::class,'delete']);
 
     // TRANSACTION
     Route::get('/transaction', [TransactionController::class, 'index']);
     Route::get('/transaction/{transaction}', [TransactionController::class, 'show']);
     Route::post('/transaction', [TransactionController::class, 'store']);
-
+    Route::put('/shipment/{store_transaction_id}', [TransactionController::class, 'updateShipment']);
+    
     // CART
     Route::get('/cart', [CartController::class, 'index']);
     Route::post('/cart', [CartController::class, 'store']);
@@ -98,6 +99,7 @@ Route::middleware('auth:sanctum')->group (function () {
     //VOUCHER
     Route::get('voucher', [VoucherController::class,'all']);
     Route::post('voucher', [VoucherController::class,'create']);
+    Route::delete('delete-voucher/{id}', [VoucherController::class,'destroy']);
     
     //EMAIL_VERIFICATION
     Route::post('email/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail']);

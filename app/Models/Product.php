@@ -57,4 +57,9 @@ class Product extends Model
     public function favorites(){
         return $this->hasMany(ProductFavorite::class,'products_id','id');
     }
+
+    public function items(){
+         return $this->hasMany(StoreTrasanctionItem::class);
+    }
+
 }

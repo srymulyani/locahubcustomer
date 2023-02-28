@@ -15,7 +15,7 @@ class TransactionController extends Controller
 {
    public function index(Request $request)
    {
-		$transactions = Transaction::with(['buyer', 'store_transactions', 'store_transactions.store', 'store_transactions.items', 'address'])->where('buyer_id', auth()->user()->id);
+		$transactions = Transaction::with(['buyer', 'store_transactions', 'store_transactions.store','store_transactions.items','store_transactions.items.product.galleries', 'address'])->where('buyer_id', auth()->user()->id);
 		$limit = $request->limit ? intval($request->limit) : 10;
 		$keyword = $request->keyword ? $request->keyword : null;
 		$status = $request->status ? $request->status : null;
@@ -26,7 +26,7 @@ class TransactionController extends Controller
                 ->orWhere("status", "like", "%$keyword%");
         }
 
-        if($status && in_array($status, ['menunggu konfirmasi', 'diproses', 'dikirim', 'selesai', 'dibatalkan', 'menunggu pembayaran', 'expired'])){
+        if($status && in_array($status, ['menunggu pembayaran', 'dibayar', 'dikemas','diproses','dikirim','selesai','dibatalkan','expired' ])){
             $transactions = $transactions->whereHas('store_transactions', function($q) use($status){
                 $q->where('status', $status);
             });
@@ -107,7 +107,7 @@ class TransactionController extends Controller
             $origin[$store_id] = Store::find($store_id)->city_id;
             
             $response = Http::post('https://api.rajaongkir.com/starter/cost', [
-                'key' => env('RAJA_ONGKIR_KEY'),
+                'key' => env('RAJAONGKIR_API_KEY'),
                 'origin' => $origin[$store_id],
                 'destination' => $destination,
                 'weight' => $weight,
@@ -130,6 +130,11 @@ class TransactionController extends Controller
         foreach ($request->products as $key => $request_product) {
             $product = Product::find($request_product['product_id']);
             
+            //CHECK IF PRODUCT EXIST
+            if (!$product){
+                continue;
+            }
+
             $store_transaction = StoreTransaction::updateOrCreate([
                 'store_id' => $product->store_id,
                 'transaction_id' => $transaction->id,
@@ -149,6 +154,7 @@ class TransactionController extends Controller
 
             StoreTransactionItem::create([
                 'store_transaction_id' => $store_transaction->id,
+                'product_id' =>$product->id,
                 'product' => $product->name,
                 'variation' => $variation,
                 'price' => $price,
@@ -204,7 +210,7 @@ class TransactionController extends Controller
 
    public function show(Transaction $transaction)
    {
-		$transaction = Transaction::with(['buyer', 'store_transactions', 'store_transactions.items', 'address'])->find($transaction->id);
+		$transaction = Transaction::with(['buyer', 'store_transactions', 'store_transactions.items','store_transactions.items.product.galleries', 'address'])->find($transaction->id);
 		
         return response([
             "success" => true,
@@ -212,4 +218,22 @@ class TransactionController extends Controller
 			"message" => "Data successfully retrieved"
         ], 200);
    }
-}
+
+   //UPDATE STORE TRANSACTION SHIPMENT
+   public function UpdateShipment($store_transaction_id, Request $request){
+        $shipment = StoreTransactionShipment::where('store_transaction_id',$store_transaction_id)->first();
+
+        if ($shipment) {
+            $shipment->track_number = $request->track_number;
+            $shipment->save();
+
+            return ResponseFormatter::success($shipment, 'Resi Berhasil Di Ubah');
+        } else {
+            return ResponseFormatter::error(null, 'Shipment tidak ditemukan', 404);
+        }
+    }
+
+
+
+   }
+

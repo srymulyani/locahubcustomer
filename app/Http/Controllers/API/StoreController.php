@@ -34,7 +34,7 @@ class StoreController extends Controller
         }
 
 
-        $store=Store::with(['city'])->first(); 
+        $store=Store::with(['city','products'])->first(); 
 
         if($name){
              $store->where('store.name','like', '%' .$name. '%');
