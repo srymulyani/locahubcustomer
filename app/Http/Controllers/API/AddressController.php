@@ -35,8 +35,6 @@ class AddressController extends Controller
                 'errors' => $validator->errors()
             ],'Authentication Failed',422);
          }
-
-
             $addressAkun = Address::where('user_id', $request->user_id)->get();
             if($request->choice == 1){
                 if($addressAkun){
