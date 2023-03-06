@@ -16,11 +16,11 @@ class StoreController extends Controller
         public function show(Request $request){
         $id = $request->id;
         $limit =$request->input('limit');
-        $city_id = $request->city_id;
+        $city_name = $request->city_name;
         $name = $request->name;
 
-        
-        $store = Store::where('id', $id)->find($id);
+        if($id){
+        $store = Store::with(['city'])->find($id);
         if($store){
             return ResponseFormatter::success(
                 $store,
@@ -32,22 +32,37 @@ class StoreController extends Controller
                 'Store Gagal tidak dapat ditampilkan',404
             );
         }
-
-
-        $store=Store::with(['city','products'])->first(); 
-
-        if($name){
-             $store->where('store.name','like', '%' .$name. '%');
         }
-        if($city_id){
-            $store->where('city_id','=', $city_id);
-        }
-        return ResponseFormatter::success(
-        $store->paginate($limit),
-        'Data Produk Berhasil Diambil'
-    );
+     
+        $stores = Store::with('city', 'products') //FILTERING BY CITY NAME
+            ->when($city_name, function ($query, $city_name) {
+                return $query->whereHas('city', function ($query) use ($city_name) {
+                    $query->where('name', 'like', '%' . $city_name . '%');
+                });
+            })
+            ->when($name, function ($query, $name) {
+                return $query->where('name', 'like', '%' . $name . '%');
+            })
+            ->get();
 
-}
+        $response = [];
+
+        foreach ($stores as $store) {
+            $city = $store->city->name;
+            $name = $store->name;
+            $products = $store->products;
+
+            $response[] = [
+                'city' => $city,
+                'name' => $name,
+                'products' => $products
+            ];
+        }
+
+        return response()->json($response);
+
+    }
+
 
     public function create(Request $request){
         try {

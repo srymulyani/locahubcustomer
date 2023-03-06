@@ -40,7 +40,7 @@ class Store extends Model
 
     public function city()
     {
-        return $this->hasOne(City::class, 'city_id', 'id');
+        return $this->belongsTo(City::class);
     }
     public function bank(){
         return $this->hasMany(Bank::class,'store_id', 'id');

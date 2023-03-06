@@ -21,4 +21,8 @@ class City extends Model
     {
         return $this->belongsTo(Province::class);
     }
+
+    public function store(){
+        return $this->hasOne(Store::class,'city_id', 'id');
+    }
 }
