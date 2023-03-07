@@ -18,8 +18,8 @@ class ProductGalleryController extends Controller
     $images = [];
 
     $validatedData = $request->validate([
-        'image1' => 'required|mimes:jpg,jpeg,png|max:2048',
-        'image2' => 'nullable|mimes:jpg,jpeg,png|max:2048',
+        'image1' => 'required|mimes:jpg,jpeg,png,svg|max:2048',
+        'image2' => 'nullable|mimes:jpg,jpeg,png,svg|max:2048',
     ], [
         'image1.required' => 'The image1 field is required.',
     ]);

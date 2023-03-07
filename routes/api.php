@@ -17,6 +17,7 @@ use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\API\ProductRatingController;
 use App\Http\Controllers\API\ProductRatingGalleryController;
 use App\Http\Controllers\API\FavoriteController;
+use App\Http\Controllers\API\BannerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -124,3 +125,7 @@ Route::get('/raja-ongkir-city', [RajaOngkirController::class, 'fetchCity']);
 Route::get('/raja-ongkir-province', [RajaOngkirController::class, 'fetchProvinces']);
 // Midtrans
 Route::post('/midtrans-notification', [MidtransController::class, 'receive']);
+
+//Banner
+Route::post('/banner', [BannerController::class, 'upload']);
+Route::get('/banner/{id}', [BannerController::class, 'show']);

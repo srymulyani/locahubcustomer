@@ -26,7 +26,7 @@ class TransactionController extends Controller
                 ->orWhere("status", "like", "%$keyword%");
         }
 
-        if($status && in_array($status, ['menunggu pembayaran', 'dibayar', 'dikemas','diproses','dikirim','selesai','dibatalkan','expired' ])){
+        if($status && in_array($status, ['menunggu_konfirmasi','diproses','dikirim','selesai','dibatalkan','menunggu_pembayaran','expired' ])){
             $transactions = $transactions->whereHas('store_transactions', function($q) use($status){
                 $q->where('status', $status);
             });

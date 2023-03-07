@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ChangeTransactionsScheme extends Migration
+class ChangeTransactionScheme extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,8 @@ class ChangeTransactionsScheme extends Migration
      */
     public function up()
     {
-        DB::statement("ALTER TABLE transactions MODIFY COLUMN payment_status ENUM('belum bayar', 'menunggu konfirmasi', 'dikemas','dikirim','selesai','dibatalkan','expired' ) DEFAULT 'belum bayar'");
+        DB::statement("ALTER TABLE transactions MODIFY COLUMN payment_status ENUM('belum-bayar', 'menunggu-konfirmasi', 'dikemas','dikirim','selesai','dibatalkan','expired' ) DEFAULT 'belum-bayar'");
+
     }
 
     /**

@@ -10,6 +10,7 @@ class CartController extends Controller
 {
     public function index()
    {
+        
 		// $carts = Cart::select('quantity','product_id')->with('product.store')->where('user_id', auth()->user()->id)->get()->groupBy('product.store.username');
         $carts = Store::with(['carts.product','carts.product.galleries','carts.variation','carts' => function($query){
             $query->where('user_id', auth()->user()->id);
@@ -22,6 +23,9 @@ class CartController extends Controller
             "cart_stores" => $carts,
 			"message" => "Data successfully retrieved"
         ], 200);
+        
+        
+
    }
 
    public function store(Request $request)

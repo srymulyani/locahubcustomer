@@ -54,7 +54,7 @@ class ProductRatingController extends Controller
             'products_id' => 'required',
             'content' => 'required|string',
             'rating' => 'required',
-            'url_image' => 'nullable',
+            'url' => 'nullable',
         ]);
         if ($validator->fails()) {
             return ResponseFormatter::error([

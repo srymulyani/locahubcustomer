@@ -13,7 +13,8 @@ class ChangeStoreTransactionsScheme extends Migration
      */
     public function up()
     {
-        DB::statement("ALTER TABLE store_transactions MODIFY COLUMN status ENUM('menunggu pembayaran', 'dibayar', 'dikemas','diproses','dikirim','selesai','dibatalkan','expired' ) DEFAULT 'menunggu pembayaran'");
+          DB::statement("ALTER TABLE store_transactions MODIFY COLUMN status ENUM('menunggu-pembayaran', 'dibayar', 'dikemas','diproses','dikirim','selesai','dibatalkan','expired' ) DEFAULT 'menunggu-pembayaran'");
+
     }
 
     /**
