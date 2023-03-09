@@ -15,7 +15,6 @@ class FavoriteController extends Controller
         $favorite->user_id = $request->input('user_id');
         $favorite->product_id = $request->input('product_id');
         $favorite->save();
-
         return response()->json([
             'message' => 'Favorite created successfully.'
         ], 200);
