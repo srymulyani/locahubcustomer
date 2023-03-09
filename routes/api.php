@@ -11,7 +11,7 @@ use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\ProductGalleryController;
 use App\Http\Controllers\API\ProductCategoryController;
 use App\Http\Controllers\API\EmailVerificationController;
-use App\Http\Controllers\API\{BankController, CartController, MidtransController, RajaOngkirController, TransactionController};
+use App\Http\Controllers\API\{BankController, CartController, InvoiceController, MidtransController, RajaOngkirController, TransactionController};
 use App\Http\Controllers\API\StoreController;
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\API\ProductRatingController;
@@ -129,3 +129,6 @@ Route::post('/midtrans-notification', [MidtransController::class, 'receive']);
 //Banner
 Route::post('/banner', [BannerController::class, 'upload']);
 Route::get('/banner/{id}', [BannerController::class, 'show']);
+
+//Invoice
+Route::get('/print-invoice/{id}', [InvoiceController::class, 'printInvoice']);
