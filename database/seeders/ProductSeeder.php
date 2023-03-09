@@ -21,15 +21,14 @@ class ProductSeeder extends Seeder
             'price' => 100*$i,
             'products_information' => Str::random(10).'adalaha product',
             'categories_id' => $i,
-            'store_id' => $i,
+            'store_id' => "1",
             'tags' => "",
             'height' => 5 * $i,
             'wide' => 6 * $i,
             'long' => 7 * $i,
             'weight' => 8 * $i,
             'status' => ''
-            ];
-
+            ]; 
             DB::table('products')->insert($data[$i]);
         }
     }

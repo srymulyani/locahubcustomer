@@ -66,7 +66,7 @@ class ProductController extends Controller
         $product->where('product_information', 'like', '%'. $products_information. '%');
     }
     if ($categories){
-        $product->where('categories_id'.$categories);   
+        $product->where('categories_id',$categories);   
     }
     if ($tags){
         $product->where('tags','like', '%' . $tags . '%');

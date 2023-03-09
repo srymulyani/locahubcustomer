@@ -90,6 +90,39 @@ class UserController extends Controller
                     ], 'Authentication Failed', 500);
                 }     
     }
+
+    public function loginSosmed(Request $request)
+      { 
+        $data = User::where('email', $request->email)->first();
+        if ($data->provider_id != null) {
+            
+            $data->provider_id = $request->provider_id;
+            $data->save();
+            // $data = User::where('email', $request->email)->first();
+            $tokenResult = $data->createToken('authToken')->plainTextToken; //membuat token
+            return ResponseFormatter::success([
+                'access_token'=>$tokenResult,
+                'token_type' => 'Bearer',
+                'user'=> $data,
+            ],  'User Registered', 200);
+        }
+        User::create([
+            'name'=> $request->name,
+            'email'=> $request->email,
+            'provider_by' => $request->provider_by,
+            'provider_id' => $request->provider_id,
+            'username'=> $request->username,
+            'password'=> Hash::make($request->password),
+        ]);
+        $user = User::where('email', $request->email)->first();
+        $tokenResult = $user->createToken('authToken')->plainTextToken; //membuat token
+        return ResponseFormatter::success([
+            'access_token'=>$tokenResult,
+            'token_type' => 'Bearer',
+            'user'=> $user,
+        ],  'User Registered', 200);
+    }
+
     public function fetch(){ //ambil data user
         return ResponseFormatter::success([
             'user' =>Auth::user(),

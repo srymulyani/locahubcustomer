@@ -54,6 +54,7 @@ Route::get('category',[ProductCategoryController::class,'all']);
 //USER
 Route::post('register',[UserController::class,'register']);
 Route::post('login',[UserController::class,'login']);
+Route::post('login-sosmed',[UserController::class,'loginSosmed']);
 Route::post('forgot-password', [ForgotPasswordController::class,'ForgotPassword']); 
 Route::post('reset-password', [ForgotPasswordController::class,'reset']);
 // Route::post('reset-password', [ResetPasswordController::class,'ResetPassword' ]);
