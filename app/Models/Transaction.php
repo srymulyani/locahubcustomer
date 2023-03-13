@@ -78,6 +78,10 @@ class Transaction extends Model
     }
 
     public function items(){
-        return $this->hasMany(StoreTransactionItem::class); 
+        return $this->hasManyThrough(
+            StoreTransactionItem::class,
+            StoreTransaction::class,
+            'transaction_id',
+            'store_transaction_id'); 
     }
 }
