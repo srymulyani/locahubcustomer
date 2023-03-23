@@ -40,11 +40,8 @@ Route::post('products', [ProductController::class,'create']);
 Route::post('updateProducts', [ProductController::class,'updateAll']);
 Route::delete('products/{id}', [ProductController::class,'delete']);
 
-//FAVORITE PRODUCTS
-
-Route::get('products-favorites/{user_id}',[FavoriteController::class,'index']);
-Route::post('products-favorites', [FavoriteController::class,'store']);
-Route::delete('delete-favorites/{product_id}', [FavoriteController::class,'destroy']);
+//GET STORE WITHOUT AUTHENTIFICATION
+Route::get('store', [StoreController::class,'show']);
 
 //PRODUCT GALLERY
 Route::post('upload', [ProductGalleryController::class, 'upload']);
@@ -93,8 +90,13 @@ Route::middleware('auth:sanctum')->group (function () {
     Route::delete('/cart/clear', [CartController::class, 'clear']);
     Route::delete('/cart/{cart}', [CartController::class, 'destroy']);
 
+
+    //FAVORITE PRODUCTS
+    Route::get('products-favorites/{user_id}',[FavoriteController::class,'index']);
+    Route::post('products-favorites', [FavoriteController::class,'store']);
+    Route::delete('delete-favorites/{product_id}', [FavoriteController::class,'destroy']);
+
     //STORE
-    Route::get('store', [StoreController::class,'show']);
     Route::post('create-store',[StoreController::class,'create']);
     Route::post('store-update',[StoreController::class,'update']);
 

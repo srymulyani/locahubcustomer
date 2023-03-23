@@ -11,34 +11,21 @@ use App\Http\Controllers\Controller;
 class ProductRatingController extends Controller
 {
     public function show(Request $request){
-        $id = $request->id;
         $products_id = $request->products_id;
 
-        if($id){
-        $review = ProductRating::where('id', $id)->first();
-        if($review){
-             return ResponseFormatter::success(
-                $review,
-                'Rating Product berhasil Ditampilkan',
-             );
-        }else{
-           
-            return ResponseFormatter::error(
-                null,
-                'Rating Product Gagal Ditampilkan',500
-            );
-        }
-    }
-
       if($products_id){
-        $review = ProductRating::where('products_id' , $products_id)->first();
-           if($review){
+        $reviews = ProductRating::where('products_id' , $products_id)->get();
+           if($reviews->count() > 0){
+            $total_reviews = $reviews->count();
              return ResponseFormatter::success(
-                $review,
+                null,
+                [
+                    'total_reviews'=> $total_reviews,
+                    'reviews' => $reviews,
+                ],
                 'Rating Product berhasil Ditampilkan',
              );
         }else{
-           
             return ResponseFormatter::error(
                 null,
                 'Rating Product Gagal Ditampilkan',500

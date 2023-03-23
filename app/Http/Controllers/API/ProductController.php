@@ -51,8 +51,8 @@ class ProductController extends Controller
     }
 
 
-    $product=Product::with(['category','galleries','variation','rating','store']); //Filltering Data
-
+    $product=Product::with(['category:id,name','galleries','variation','rating','store.city:id,name']);
+       
     if ($name){
         $product->where('products.name','like', '%' .$name. '%');
     }
@@ -65,9 +65,9 @@ class ProductController extends Controller
     if ($products_information){
         $product->where('product_information', 'like', '%'. $products_information. '%');
     }
-    if ($categories){
-        $product->where('categories_id',$categories);   
-    }
+    // if ($categories){
+    //     $product->where('categories_id',$categories);   
+    // }
     if ($tags){
         $product->where('tags','like', '%' . $tags . '%');
     }

@@ -25,14 +25,17 @@ class Store extends Model
         'city_id',
         'name',
         'profile',
-        'image',
-        'url',
         'username',
         'addres',
         'description',
         'store_note',
     ];
 
+    public function getUrlAttribute()
+    {
+        if (!$this->attributes["profile"]) return "";
+        return url($this->attributes["profile"]);
+    }
     public function courier ()
     {
         return $this->hasMany(Courier::class,'couriers_id','id');

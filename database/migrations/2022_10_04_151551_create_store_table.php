@@ -20,8 +20,6 @@ class CreateStoreTable extends Migration
             $table->bigInteger('day_id')->nullable();
             $table->string('name');
             $table->string('profile');
-            $table->string('image')->nullable();
-            $table->string('url')->nullable();
             $table->string('username');
             $table->string('addres');
             $table->longText('description')->nullable();

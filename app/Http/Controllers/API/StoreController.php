@@ -75,6 +75,7 @@ class StoreController extends Controller
                 'addres' =>'required|string',
                 'description' => 'required|string',
                 'store_note' => 'required|string',
+                'profile' => 'nullable',
                ]);
 
                 if ($validator->fails()){
@@ -83,7 +84,7 @@ class StoreController extends Controller
                     'errors' => $validator->errors()
               ],'Authentication Failed',422);
             }
-            $profile ="StoreImage/image_profile_toko.png";
+       
 
             $store=Store::create([
                 'user_id'=>$request->user_id,
@@ -93,8 +94,13 @@ class StoreController extends Controller
                 'addres' => $request->addres,
                 'description' =>$request->description,
                 'store_note' =>$request->store_note,
-                'profile' =>$profile,
             ]);
+
+            if ($request->hasFile('profile')) {
+            $path = $request->file('profile')->storeAs('ProfileStore', $request->file('profile')->getClientOriginalName(),'public');
+            $store->profile = 'storage/' . $path;
+            $store->save();
+        }
 
 
             $courier = Courier::create([
