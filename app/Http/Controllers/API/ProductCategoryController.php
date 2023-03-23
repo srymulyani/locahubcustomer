@@ -13,7 +13,6 @@ class ProductCategoryController extends Controller
     public function all (Request $request)
     {
         $id =$request->input('id');
-        $store_id=$request->store_id;
         $limit =$request->input('limit');
         $name =$request->name;
         $show_product=$request->input('show_product');
@@ -49,10 +48,6 @@ class ProductCategoryController extends Controller
             $category->with('products');
          }
 
-         if ($store_id){
-            $category->where('store_id', $store_id);
-         }
-
          
          return ResponseFormatter::success(
             $category->paginate($limit),
@@ -66,7 +61,6 @@ class ProductCategoryController extends Controller
              $validator = Validator::make($request->all(),
              [
                 'name' => 'required|string',
-                'store_id' =>'required'
             ]);
 
             if ($validator->fails()){
@@ -79,7 +73,6 @@ class ProductCategoryController extends Controller
             $product_category = ProductCategory::create([
 
                 'name' => $request->name,
-                'store_id' =>$request->store_id
             ]);
 
             return ResponseFormatter::success($product_category, 'Kategori produk berhasil ditambahkan!');

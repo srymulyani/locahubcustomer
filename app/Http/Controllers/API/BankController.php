@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 
 class BankController extends Controller
 {
+    // CREATE ACCOUNT BANK
     public function create(Request $request){
         try {
 
@@ -59,6 +60,8 @@ class BankController extends Controller
             );
         }
     }
+
+    // FETCHING DATA
     public function all(Request $request)
     {
         $users_id = $request->input('users_id');
@@ -91,6 +94,7 @@ class BankController extends Controller
         }
     }
 
+    // EDIT DATA
     public function edit(Request $request)
     {
         $bank = Bank::find($request->id);
@@ -122,6 +126,8 @@ class BankController extends Controller
             'Berhasil mengubah data bank'
         );
     }
+
+    // DELETE DATA BANK
     public function delete($id)
     {
         $category = Bank::find($id);

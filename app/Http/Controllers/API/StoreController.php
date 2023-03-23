@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 
 class StoreController extends Controller
 {
+    // FETCHING STORE DATA
         public function show(Request $request){
         $id = $request->id;
         $limit =$request->input('limit');
@@ -63,7 +64,7 @@ class StoreController extends Controller
 
     }
 
-
+    // CREATE STORE
     public function create(Request $request){
         try {
                $validator= Validator::make($request->all(),[
@@ -141,6 +142,7 @@ class StoreController extends Controller
 
     }
 
+    // UPDATE STORE
     public function update(Request $request){
         try {
             $request->all();

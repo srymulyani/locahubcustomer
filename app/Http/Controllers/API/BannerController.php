@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Banner;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class BannerController extends Controller
 {
@@ -14,11 +14,11 @@ class BannerController extends Controller
           
         $image = Banner::findOrFail($id);
 
-        return response()->streamDownload(function () use ($image) {
-            echo Storage::get($image->path);
-        }, $image->filename);
-    
+        return response()->json([
+            'url' => $image->url,
+        ]);
     }
+    
 
     public function upload(Request $request){
    

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API;
 
 use App\Helpers\ResponseFormatter;
-use App\Models\ProductGallery;
 use App\Models\ProductVariation;
 use App\Models\Product;
 use App\Http\Controllers\Controller;
@@ -12,7 +11,8 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
-    public function all(Request $request)
+    // FETCHING DATA
+     public function all(Request $request)
     {
         $id =$request->input('id');
         $limit =$request->input('limit');
@@ -57,10 +57,10 @@ class ProductController extends Controller
         $product->where('products.name','like', '%' .$name. '%');
     }
     if ($price_from){
-        $product->where('price', '>=' . $price_from);
+        $product->where('price', '>=', $price_from);
     }
     if ($price_to){
-        $product->where('price','<='. $price_to);
+        $product->where('price','<=', $price_to);
     }
     if ($products_information){
         $product->where('product_information', 'like', '%'. $products_information. '%');
@@ -90,6 +90,7 @@ class ProductController extends Controller
     );
     }
 
+    //CREATE PRODUCT
     public function create(Request $request) 
     {
         try{
@@ -158,6 +159,8 @@ class ProductController extends Controller
             );
         };
     }
+
+    // UPDATE PRODUCT
     public function updateAll(Request $request){
         try {
 
@@ -201,6 +204,7 @@ class ProductController extends Controller
         };
     }
 
+    // DELETE PRODUCT
     public function delete($id){
         try {
         $product = Product::where('id',$id)->first();
