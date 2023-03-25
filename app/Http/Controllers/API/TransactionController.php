@@ -9,46 +9,47 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use App\Services\Midtrans\CreateSnapTokenService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class TransactionController extends Controller
 {
-   public function index(Request $request)
-   {
-		$transactions = Transaction::with(['buyer', 'store_transactions', 'store_transactions.store','store_transactions.items','store_transactions.items.product.galleries', 'address'])->where('buyer_id', auth()->user()->id);
-		$limit = $request->limit ? intval($request->limit) : 10;
-		$keyword = $request->keyword ? $request->keyword : null;
-		$status = $request->status ? $request->status : null;
+    public function index(Request $request)
+    {
+        $transactions = Transaction::with(['buyer', 'store_transactions', 'store_transactions.store', 'store_transactions.items', 'store_transactions.items.product.galleries', 'address'])->where('buyer_id', auth()->user()->id);
+        $limit = $request->limit ? intval($request->limit) : 10;
+        $keyword = $request->keyword ? $request->keyword : null;
+        $status = $request->status ? $request->status : null;
 
-		if($keyword){
+        if ($keyword) {
             $transactions = $transactions->where("code", "like", "%$keyword%")
                 ->orWhere("invoice", "like", "%$keyword%")
                 ->orWhere("status", "like", "%$keyword%");
         }
 
-        if($status && in_array($status, ['menunggu_konfirmasi','diproses','dikirim','selesai','dibatalkan','menunggu_pembayaran','expired' ])){
-            $transactions = $transactions->whereHas('store_transactions', function($q) use($status){
+        if ($status && in_array($status, ['menunggu_konfirmasi', 'diproses', 'dikirim', 'selesai', 'dibatalkan', 'menunggu_pembayaran', 'expired'])) {
+            $transactions = $transactions->whereHas('store_transactions', function ($q) use ($status) {
                 $q->where('status', $status);
             });
         }
 
-		if($limit == -1){
+        if ($limit == -1) {
             $transactions = [
                 "data" => $transactions->get()
             ];
-        }else{
+        } else {
             $transactions = $transactions->paginate($limit);
         }
 
         return response([
             "success" => true,
             "transactions" => $transactions,
-			"message" => "Data successfully retrieved"
+            "message" => "Data successfully retrieved"
         ], 200);
-   }
+    }
 
-   public function store(Request $request)
-   {
+    public function store(Request $request)
+    {
         // VALIDATE REQUEST DATA
         $request->validate([
             'address_id' => 'required|exists:address,id',
@@ -63,7 +64,7 @@ class TransactionController extends Controller
             'products.*.product_id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|numeric|min:1',
             'products.*.variation_id' => 'nullable|exists:products_variation,id',
-        ],[
+        ], [
             'note.string' => 'Catatan tidak valid !',
             'note.max' => 'Catatan maksimal 255 karakter !',
             'products.required' => 'Pilih produk !',
@@ -80,148 +81,159 @@ class TransactionController extends Controller
             'products.*.variation_id.exists' => 'Variasi produk tidak ditemukan !',
         ]);
 
-        // GET PRODUCTS BASED ON REQUEST PRODUCT ID
-        // $product_ids = array_column($request->products, 'product_id');
-        // $products = Product::whereIn('id', $product_ids)->get();
+        try {
+            // INIT DB TRANSACTION
+            DB::beginTransaction();
 
-        // CALCULATE TOTAL WEIGHTS FOR EVERY STORE TRANSACTION
-        $weights = [];
-        foreach ($request->products as $request_product) {
-            $product = Product::find($request_product['product_id']);
+            // GET PRODUCTS BASED ON REQUEST PRODUCT ID
+            // $product_ids = array_column($request->products, 'product_id');
+            // $products = Product::whereIn('id', $product_ids)->get();
 
-            $key = array_search($product->id, array_column($request->products, 'product_id'));
-            $quantity = $request->products[$key]['quantity'];
+            // CALCULATE TOTAL WEIGHTS FOR EVERY STORE TRANSACTION
+            $weights = [];
+            foreach ($request->products as $request_product) {
+                $product = Product::find($request_product['product_id']);
 
-            if (isset($weights[$product->store_id])) {
-                $weights[$product->store_id] = $weights[$product->store_id] + ($product->weight * $quantity);
-            }else{
-                $weights[$product->store_id] = $product->weight * $quantity ;
+                $key = array_search($product->id, array_column($request->products, 'product_id'));
+                $quantity = $request->products[$key]['quantity'];
 
-            }
-        }
-        
-        // GET SHIPMENT COST FOR EVERY STORE TRANSACTION FROM RAJAONGKIR
-        $destination = Address::find($request->address_id)->city_id;
-        foreach ($weights as $store_id => $weight) {
-            $shipping_key = array_search($store_id, array_column($request->shippings, 'store_id'));
-            $origin[$store_id] = Store::find($store_id)->city_id;
-            
-            $response = Http::post('https://api.rajaongkir.com/starter/cost', [
-                'key' => env('RAJAONGKIR_API_KEY'),
-                'origin' => $origin[$store_id],
-                'destination' => $destination,
-                'weight' => $weight,
-                'courier' => $request->shippings[$shipping_key]['code']
-            ]);
-            
-            $costs_key = array_search($request->shippings[$shipping_key]['service'], array_column($response->json()['rajaongkir']['results'][0]['costs'], 'service'));
-            $prices[$store_id] = $response->json()['rajaongkir']['results'][0]['costs'][$costs_key]['cost'][0]['value'];
-        }
-
-        // CREATE TRANSACTION
-        $transaction = Transaction::create([
-            'buyer_id' => auth()->user()->id,
-            'address_id' => $request->address_id,
-            'code' => Transaction::generateCode(),
-            'grand_total' => 0,
-        ]);
-
-        // CREATE STORE TRANSACTION AND THE ITEMS
-        foreach ($request->products as $key => $request_product) {
-            $product = Product::find($request_product['product_id']);
-            
-            //CHECK IF PRODUCT EXIST
-            if (!$product){
-                continue;
-            }
-
-            $store_transaction = StoreTransaction::updateOrCreate([
-                'store_id' => $product->store_id,
-                'transaction_id' => $transaction->id,
-                'shipping_cost' => $prices[$product->store_id],
-            ]);
-
-            $variation = null;
-            $price = $product->price;
-
-            if($request->products[$key]['variation_id']){
-                $product_variation = ProductVariation::find($request->products[$key]['variation_id']);
-                if($product_variation->product_id == $product->id){
-                    $variation = $product_variation->name;
-                    $price = $product_variation->products_price;
+                if (isset($weights[$product->store_id])) {
+                    $weights[$product->store_id] = $weights[$product->store_id] + ($product->weight * $quantity);
+                } else {
+                    $weights[$product->store_id] = $product->weight * $quantity;
                 }
             }
 
-            StoreTransactionItem::create([
-                'store_transaction_id' => $store_transaction->id,
-                'product_id' =>$product->id,
-                'product' => $product->name,
-                'variation' => $variation,
-                'price' => $price,
-                'quantity' => $request->products[$key]['quantity'],
-                'total' => $request->products[$key]['quantity']*$price,
+            // GET SHIPMENT COST FOR EVERY STORE TRANSACTION FROM RAJAONGKIR
+            $destination = Address::find($request->address_id)->city_id;
+            foreach ($weights as $store_id => $weight) {
+                $shipping_key = array_search($store_id, array_column($request->shippings, 'store_id'));
+                $origin[$store_id] = Store::find($store_id)->city_id;
+
+                $response = Http::post('https://api.rajaongkir.com/starter/cost', [
+                    'key' => env('RAJAONGKIR_API_KEY'),
+                    'origin' => $origin[$store_id],
+                    'destination' => $destination,
+                    'weight' => $weight,
+                    'courier' => $request->shippings[$shipping_key]['code']
+                ]);
+
+                $costs_key = array_search($request->shippings[$shipping_key]['service'], array_column($response->json()['rajaongkir']['results'][0]['costs'], 'service'));
+                $prices[$store_id] = $response->json()['rajaongkir']['results'][0]['costs'][$costs_key]['cost'][0]['value'];
+            }
+
+            // CREATE TRANSACTION
+            $transaction = Transaction::create([
+                'buyer_id' => auth()->user()->id,
+                'address_id' => $request->address_id,
+                'code' => Transaction::generateCode(),
+                'grand_total' => 0,
             ]);
-        }
 
-        // UPDATE DATA TOTAL STORE TRANSACTION AFTER STORING ALL THE ITEMS
-        $store_transactions = StoreTransaction::where('transaction_id', $transaction->id)->get();
+            // CREATE STORE TRANSACTION AND THE ITEMS
+            foreach ($request->products as $key => $request_product) {
+                $product = Product::find($request_product['product_id']);
 
-        foreach ($store_transactions as $store_transaction) {
-            $total = StoreTransactionItem::where('store_transaction_id', $store_transaction->id)->sum('total');
-            $store_transaction->total = $total;
-            $store_transaction->save();
+                //CHECK IF PRODUCT EXIST
+                if (!$product) {
+                    continue;
+                }
 
-            // CREATE STORE TRANSACTION SHIPMENT DATA
-            StoreTransactionShipment::create([
-                'store_transaction_id' => $store_transaction->id,
-                'origin' => City::find($origin[$store_transaction->store_id])->name,
-                'destination' => City::find($destination)->name,
-                'weight' => $weights[$store_transaction->store_id],
-            ]);
-        }
+                $store_transaction = StoreTransaction::updateOrCreate([
+                    'store_id' => $product->store_id,
+                    'transaction_id' => $transaction->id,
+                    'shipping_cost' => $prices[$product->store_id],
+                ]);
 
-        // UPDATE GRAND TOTAL TRANSACTION AFTER UPDATING TOTAL PER STORE TRANSACTION
-        $total = StoreTransaction::where('transaction_id', $transaction->id)->sum('total');
-        $shipping_cost = StoreTransaction::where('transaction_id', $transaction->id)->sum('shipping_cost');
-        $transaction->grand_total = $total + $shipping_cost;
-        $transaction->save();
+                $variation = null;
+                $price = $product->price;
 
-        // CREATE SNAP TOKEN FOR MIDTRANS
-        $snapToken = $transaction->snap_token;
-        if (empty($snapToken)) {
- 
-            $midtrans = new CreateSnapTokenService($transaction);
-            $snapToken = $midtrans->getSnapToken();
- 
-            $transaction->snap_token = $snapToken;
+                if ($request->products[$key]['variation_id']) {
+                    $product_variation = ProductVariation::find($request->products[$key]['variation_id']);
+                    if ($product_variation->product_id == $product->id) {
+                        $variation = $product_variation->name;
+                        $price = $product_variation->products_price;
+                    }
+                }
+
+                StoreTransactionItem::create([
+                    'store_transaction_id' => $store_transaction->id,
+                    'product_id' => $product->id,
+                    'product' => $product->name,
+                    'variation' => $variation,
+                    'price' => $price,
+                    'quantity' => $request->products[$key]['quantity'],
+                    'total' => $request->products[$key]['quantity'] * $price,
+                ]);
+            }
+
+            // UPDATE DATA TOTAL STORE TRANSACTION AFTER STORING ALL THE ITEMS
+            $store_transactions = StoreTransaction::where('transaction_id', $transaction->id)->get();
+
+            foreach ($store_transactions as $store_transaction) {
+                $total = StoreTransactionItem::where('store_transaction_id', $store_transaction->id)->sum('total');
+                $store_transaction->total = $total;
+                $store_transaction->save();
+
+                // CREATE STORE TRANSACTION SHIPMENT DATA
+                StoreTransactionShipment::create([
+                    'store_transaction_id' => $store_transaction->id,
+                    'origin' => City::find($origin[$store_transaction->store_id])->name,
+                    'destination' => City::find($destination)->name,
+                    'weight' => $weights[$store_transaction->store_id],
+                ]);
+            }
+
+            // UPDATE GRAND TOTAL TRANSACTION AFTER UPDATING TOTAL PER STORE TRANSACTION
+            $total = StoreTransaction::where('transaction_id', $transaction->id)->sum('total');
+            $shipping_cost = StoreTransaction::where('transaction_id', $transaction->id)->sum('shipping_cost');
+            $transaction->grand_total = $total + $shipping_cost;
             $transaction->save();
+
+            // CREATE SNAP TOKEN FOR MIDTRANS
+            $snapToken = $transaction->snap_token;
+            if (empty($snapToken)) {
+
+                $midtrans = new CreateSnapTokenService($transaction);
+                $snapToken = $midtrans->getSnapToken();
+
+                $transaction->snap_token = $snapToken;
+                $transaction->save();
+            }
+
+            // GET TRANSACTION DATA WITH SOME OF THE RELATIONS
+            $transaction = Transaction::with(['buyer', 'store_transactions', 'store_transactions.items', 'address'])->find($transaction->id);
+
+            // COMMIT
+            DB::commit();
+
+            // RETURN RESPONSE
+            return response([
+                "success" => true,
+                "transaction" => $transaction,
+                "message" => "Data successfully stored"
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return ResponseFormatter::error(null, $th->getMessage(), 500);
         }
+    }
 
-        // GET TRANSACTION DATA WITH SOME OF THE RELATIONS
-        $transaction = Transaction::with(['buyer', 'store_transactions', 'store_transactions.items', 'address'])->find($transaction->id);
-        
-        // RETURN RESPONSE
+    public function show(Transaction $transaction)
+    {
+        $transaction = Transaction::with(['buyer', 'store_transactions', 'store_transactions.items', 'store_transactions.items.product.galleries', 'address'])->find($transaction->id);
+
         return response([
             "success" => true,
             "transaction" => $transaction,
-			"message" => "Data successfully stored"
+            "message" => "Data successfully retrieved"
         ], 200);
-   }
+    }
 
-   public function show(Transaction $transaction)
-   {
-		$transaction = Transaction::with(['buyer', 'store_transactions', 'store_transactions.items','store_transactions.items.product.galleries', 'address'])->find($transaction->id);
-		
-        return response([
-            "success" => true,
-            "transaction" => $transaction,
-			"message" => "Data successfully retrieved"
-        ], 200);
-   }
-
-   //UPDATE STORE TRANSACTION SHIPMENT
-   public function UpdateShipment($store_transaction_id, Request $request){
-        $shipment = StoreTransactionShipment::where('store_transaction_id',$store_transaction_id)->first();
+    //UPDATE STORE TRANSACTION SHIPMENT
+    public function UpdateShipment($store_transaction_id, Request $request)
+    {
+        $shipment = StoreTransactionShipment::where('store_transaction_id', $store_transaction_id)->first();
 
         if ($shipment) {
             $shipment->track_number = $request->track_number;
@@ -232,8 +244,4 @@ class TransactionController extends Controller
             return ResponseFormatter::error(null, 'Shipment tidak ditemukan', 404);
         }
     }
-
-
-
-   }
-
+}

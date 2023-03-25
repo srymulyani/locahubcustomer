@@ -11,14 +11,14 @@ class Transaction extends Model
 {
     use HasFactory, SoftDeletes;
 
-    
-        /**
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var string[]
      */
     protected $softDelete = true;
-     protected $table ="transaction";
+    protected $table = "transactions";
     protected $fillable = [
         'buyer_id',
         'address_id',
@@ -29,28 +29,28 @@ class Transaction extends Model
         'snap_token',
     ];
 
-    public const TRANSACTIONCODE ='INV';
-    
-  
+    public const TRANSACTIONCODE = 'INV';
+
+
 
     public static function generateCode()
     {
-        $dateCode = self::TRANSACTIONCODE. '/'. date('Ymd'). '/'. General::integerToRoman(date('m')). '/'. General::integerToRoman(date('d')). '/';
+        $dateCode = self::TRANSACTIONCODE . '/' . date('Ymd') . '/' . General::integerToRoman(date('m')) . '/' . General::integerToRoman(date('d')) . '/';
 
         $lastTransaction = self::select([\DB::raw('MAX(transactions.code) AS last_code')])
-            ->where('code', 'like', $dateCode. '%')
+            ->where('code', 'like', $dateCode . '%')
             ->first();
 
         $lastTransactionCode = !empty($lastTransaction) ? $lastTransaction['last_code'] : null;
 
-        $transactionCode = $dateCode.'00001';
+        $transactionCode = $dateCode . '00001';
         if ($lastTransactionCode) {
-            $lastTransactionNumber = str_replace ($dateCode, '', $lastTransactionCode);
+            $lastTransactionNumber = str_replace($dateCode, '', $lastTransactionCode);
             $nextTransactionNumber = sprintf('%05d', (int) $lastTransactionNumber + 1);
 
-            $transactionCode = $dateCode. $nextTransactionNumber;
+            $transactionCode = $dateCode . $nextTransactionNumber;
         }
-        if (self::_isTransactionCodeExist($transactionCode)){
+        if (self::_isTransactionCodeExist($transactionCode)) {
             return generateTransactionCode();
         }
 
@@ -77,11 +77,13 @@ class Transaction extends Model
         return $this->hasMany(StoreTransaction::class);
     }
 
-    public function items(){
+    public function items()
+    {
         return $this->hasManyThrough(
             StoreTransactionItem::class,
             StoreTransaction::class,
             'transaction_id',
-            'store_transaction_id'); 
+            'store_transaction_id'
+        );
     }
 }

@@ -12,41 +12,41 @@ class MidtransController extends Controller
     public function receive()
     {
         $callback = new CallbackService;
- 
+
         if ($callback->isSignatureKeyVerified()) {
             $notification = $callback->getNotification();
             $transaction = $callback->getTransaction();
-            
+
             if ($callback->isSuccess()) {
                 Transaction::where('code', $transaction->code)->update([
-                    'payment_status' => 'dibayar',
+                    'payment_status' => 'menunggu-konfirmasi',
                 ]);
-                
+
                 StoreTransaction::where('transaction_id', $transaction->id)->update([
-                    'status' => 'menunggu_konfirmasi'
+                    'status' => 'dibayar'
                 ]);
             }
- 
+
             if ($callback->isExpire()) {
                 Transaction::where('code', $transaction->code)->update([
                     'payment_status' => 'expired',
                 ]);
-                
+
                 StoreTransaction::where('transaction_id', $transaction->id)->update([
                     'status' => 'expired'
                 ]);
             }
- 
+
             if ($callback->isCancelled()) {
                 Transaction::where('code', $transaction->code)->update([
                     'payment_status' => 'dibatalkan',
                 ]);
-                
+
                 StoreTransaction::where('transaction_id', $transaction->id)->update([
                     'status' => 'dibatalkan'
                 ]);
             }
- 
+
             return response()
                 ->json([
                     'success' => true,
