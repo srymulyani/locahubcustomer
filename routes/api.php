@@ -35,53 +35,55 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 //PRODUCTS
-Route::get('products',[ProductController::class,'all']);
-Route::post('products', [ProductController::class,'create']);
-Route::post('updateProducts', [ProductController::class,'updateAll']);
-Route::delete('products/{id}', [ProductController::class,'delete']);
+Route::get('products', [ProductController::class, 'all']);
+Route::post('products', [ProductController::class, 'create']);
+Route::post('updateProducts', [ProductController::class, 'updateAll']);
+Route::delete('products/{id}', [ProductController::class, 'delete']);
 
 //GET STORE WITHOUT AUTHENTIFICATION
-Route::get('store', [StoreController::class,'show']);
+Route::get('store', [StoreController::class, 'show']);
 
 //PRODUCT GALLERY
 Route::post('upload', [ProductGalleryController::class, 'upload']);
 
 //PRODUCTS CATEGORY
-Route::get('category',[ProductCategoryController::class,'all']);
+Route::get('category', [ProductCategoryController::class, 'all']);
 
 //USER
-Route::post('register',[UserController::class,'register']);
-Route::post('login',[UserController::class,'login']);
-Route::post('login-sosmed',[UserController::class,'loginSosmed']);
-Route::post('forgot-password', [ForgotPasswordController::class,'ForgotPassword']); 
-Route::post('reset-password', [ForgotPasswordController::class,'reset']);
+Route::post('register', [UserController::class, 'register']);
+Route::post('login', [UserController::class, 'login']);
+Route::post('login-sosmed', [UserController::class, 'loginSosmed']);
+Route::post('forgot-password', [ForgotPasswordController::class, 'ForgotPassword']);
+Route::post('reset-password', [ForgotPasswordController::class, 'reset']);
 // Route::post('reset-password', [ResetPasswordController::class,'ResetPassword' ]);
 
 
-Route::middleware('auth:sanctum')->group (function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('user',  [UserController::class, 'fetch']);
-    Route::post('user',[UserController::class,'updateProfile']);
-    Route::post('logout',[UserController::class,'logout']);
+    Route::post('user', [UserController::class, 'updateProfile']);
+    Route::post('logout', [UserController::class, 'logout']);
     Route::post('changePassword', [UserController::class, 'changePassword']);
 
     //ADDRESS
-    Route::post('address/add', [AddressController::class,'create']); 
-    Route::get('address/all', [AddressController::class,'all']);
+    Route::post('address/add', [AddressController::class, 'create']);
+    Route::get('address/all', [AddressController::class, 'all']);
     Route::post('address/edit', [AddressController::class, 'edit']);
-    Route::delete('address/{id}', [AddressController::class,'destroy']);
+    Route::delete('address/{id}', [AddressController::class, 'destroy']);
 
     //BANK
-    Route::post('bank', [BankController::class,'create']); 
-    Route::get('bank', [BankController::class,'all']);
+    Route::post('bank', [BankController::class, 'create']);
+    Route::get('bank', [BankController::class, 'all']);
     Route::post('bank/edit', [BankController::class, 'edit']);
-    Route::delete('bank/{id}', [BankController::class,'delete']);
+    Route::delete('bank/{id}', [BankController::class, 'delete']);
 
     // TRANSACTION
     Route::get('/transaction', [TransactionController::class, 'index']);
     Route::get('/transaction/{transaction}', [TransactionController::class, 'show']);
     Route::post('/transaction', [TransactionController::class, 'store']);
     Route::put('/shipment/{store_transaction_id}', [TransactionController::class, 'updateShipment']);
-    
+    Route::get('/shipment/{store_transaction_id}/track', [TransactionController::class, 'trackShipment']);
+    Route::put('/shipment/{store_transaction_id}/finish', [TransactionController::class, 'finishShipment']);
+
     // CART
     Route::get('/cart', [CartController::class, 'index']);
     Route::post('/cart', [CartController::class, 'store']);
@@ -92,33 +94,33 @@ Route::middleware('auth:sanctum')->group (function () {
 
 
     //FAVORITE PRODUCTS
-    Route::get('products-favorites/{user_id}',[FavoriteController::class,'index']);
-    Route::post('products-favorites', [FavoriteController::class,'store']);
-    Route::delete('delete-favorites/{product_id}', [FavoriteController::class,'destroy']);
+    Route::get('products-favorites/{user_id}', [FavoriteController::class, 'index']);
+    Route::post('products-favorites', [FavoriteController::class, 'store']);
+    Route::delete('delete-favorites/{product_id}', [FavoriteController::class, 'destroy']);
 
     //STORE
-    Route::post('create-store',[StoreController::class,'create']);
-    Route::post('store-update',[StoreController::class,'update']);
+    Route::post('create-store', [StoreController::class, 'create']);
+    Route::post('store-update', [StoreController::class, 'update']);
 
     //VOUCHER
-    Route::get('voucher', [VoucherController::class,'all']);
-    Route::post('voucher', [VoucherController::class,'create']);
-    Route::delete('delete-voucher/{id}', [VoucherController::class,'destroy']);
-    
+    Route::get('voucher', [VoucherController::class, 'all']);
+    Route::post('voucher', [VoucherController::class, 'create']);
+    Route::delete('delete-voucher/{id}', [VoucherController::class, 'destroy']);
+
     //EMAIL_VERIFICATION
     Route::post('email/verification-notification', [EmailVerificationController::class, 'sendVerificationEmail']);
     Route::get('verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
 
     //RATING
-    Route::get('rating', [ProductRatingController::class,'show']);
-    Route::post('create-rating', [ProductRatingController::class,'create']);
-    Route::post('upload-rating',[ProductRatingGalleryController::class,'upload']);
-    
+    Route::get('rating', [ProductRatingController::class, 'show']);
+    Route::post('create-rating', [ProductRatingController::class, 'create']);
+    Route::post('upload-rating', [ProductRatingGalleryController::class, 'upload']);
+
     //PRODUCT_CATEGORY
-    Route::get('category', [ProductCategoryController::class,'all']);
-    Route::post('category', [ProductCategoryController::class,'create']);
-    Route::post('edit/category', [ProductCategoryController::class,'edit']);
-    Route::delete('category/{id}', [ProductCategoryController::class,'delete']);
+    Route::get('category', [ProductCategoryController::class, 'all']);
+    Route::post('category', [ProductCategoryController::class, 'create']);
+    Route::post('edit/category', [ProductCategoryController::class, 'edit']);
+    Route::delete('category/{id}', [ProductCategoryController::class, 'delete']);
 });
 
 // Shipment

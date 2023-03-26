@@ -119,7 +119,12 @@ class TransactionController extends Controller
                 ]);
 
                 $costs_key = array_search($request->shippings[$shipping_key]['service'], array_column($response->json()['rajaongkir']['results'][0]['costs'], 'service'));
+
                 $prices[$store_id] = $response->json()['rajaongkir']['results'][0]['costs'][$costs_key]['cost'][0]['value'];
+                $courier_codes[$store_id] = $response->json()['rajaongkir']['results'][0]['code'];
+                $courier_names[$store_id] = $response->json()['rajaongkir']['results'][0]['name'];
+                $services[$store_id] = $response->json()['rajaongkir']['results'][0]['costs'][$costs_key]['service'];
+                $etds[$store_id] = $response->json()['rajaongkir']['results'][0]['costs'][$costs_key]['cost'][0]['etd'];
             }
 
             // CREATE TRANSACTION
@@ -143,6 +148,10 @@ class TransactionController extends Controller
                     'store_id' => $product->store_id,
                     'transaction_id' => $transaction->id,
                     'shipping_cost' => $prices[$product->store_id],
+                    'courier' => $courier_codes[$product->store_id],
+                    'courier_name' => $courier_names[$product->store_id],
+                    'shipping_service' => $services[$product->store_id],
+                    'shipping_etd' => $etds[$product->store_id],
                 ]);
 
                 $variation = null;
@@ -230,18 +239,105 @@ class TransactionController extends Controller
         ], 200);
     }
 
-    //UPDATE STORE TRANSACTION SHIPMENT
-    public function UpdateShipment($store_transaction_id, Request $request)
+    // UPDATE RESI & STATUS STORE TRANSACTION & TRANSACTION => DIKIRIM
+    public function updateShipment(Request $request, $store_transaction_id)
     {
-        $shipment = StoreTransactionShipment::where('store_transaction_id', $store_transaction_id)->first();
+        try {
+            DB::beginTransaction();
 
-        if ($shipment) {
+            $storeTransaction = StoreTransaction::findOrFail($store_transaction_id);
+            $storeTransaction->status = 'dikirim';
+            $storeTransaction->receipt = $request->track_number;
+            $storeTransaction->save();
+
+            $shipment = $storeTransaction->shipment()->firstOrFail();
             $shipment->track_number = $request->track_number;
             $shipment->save();
 
+            $transaction = $storeTransaction->transaction()->firstOrFail();
+            $storeTransactions = $transaction->store_transactions()->get();
+
+            $allSent = true;
+            foreach ($storeTransactions as $st) {
+                if ($st->status != 'dikirim' && !$st->receipt) {
+                    $allSent = false;
+                }
+            }
+
+            if ($allSent) {
+                $transaction->payment_status = 'dikirim';
+                $transaction->save();
+            }
+
+            DB::commit();
             return ResponseFormatter::success($shipment, 'Resi Berhasil Di Ubah');
-        } else {
-            return ResponseFormatter::error(null, 'Shipment tidak ditemukan', 404);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return ResponseFormatter::error(null, $th->getMessage(), 500);
+        }
+    }
+
+    // TRACK STORE TRANSACTION
+    public function trackShipment($store_transaction_id)
+    {
+        $storeTransaction = StoreTransaction::findOrFail($store_transaction_id);
+
+        if (!$storeTransaction->receipt) {
+            return ResponseFormatter::error(null, 'Resi belum diinput', 422);
+        }
+
+        $response = Http::asForm()
+            ->withHeaders([
+                'key' => env('RAJAONGKIR_API_KEY'),
+                'content-type' => 'application/x-www-form-urlencoded',
+            ])
+            ->post('https://pro.rajaongkir.com/api/waybill', [
+                'waybill' => $storeTransaction->receipt,
+                'courier' => $storeTransaction->courier,
+            ])
+            ->json();
+
+        if ($response['rajaongkir']['status']['code'] != 200) {
+            return ResponseFormatter::error(
+                null,
+                $response['rajaongkir']['status']['description'],
+                $response['rajaongkir']['status']['code']
+            );
+        }
+
+        return ResponseFormatter::success($storeTransaction, 'Resi Berhasil Di Ubah');
+    }
+
+    // UPDATE STATUS STORE TRANSACTION & TRANSACTION => SELESAI
+    public function finishShipment(Request $request, $store_transaction_id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $storeTransaction = StoreTransaction::findOrFail($store_transaction_id);
+            $storeTransaction->status = 'selesai';
+            $storeTransaction->save();
+
+            $transaction = $storeTransaction->transaction()->firstOrFail();
+            $storeTransactions = $transaction->store_transactions()->get();
+
+            $isDone = true;
+            foreach ($storeTransactions as $st) {
+                if ($st->status != 'selesai') {
+                    $isDone = false;
+                }
+            }
+
+            if ($isDone) {
+                $transaction->payment_status = 'selesai';
+                $transaction->save();
+            }
+
+            DB::commit();
+            return ResponseFormatter::success($storeTransaction, 'Pesanan diselesaikan');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return ResponseFormatter::error(null, $th->getMessage(), 500);
         }
     }
 }

@@ -15,6 +15,11 @@ class StoreTransaction extends Model
         'status',
         'total',
         'shipping_cost',
+        'courier',
+        'courier_name',
+        'shipping_service',
+        'shipping_etd',
+        'receipt',
         'cancellation_note',
     ];
 

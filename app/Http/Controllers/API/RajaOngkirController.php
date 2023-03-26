@@ -19,7 +19,7 @@ class RajaOngkirController extends Controller
             'products.*' => 'required|array|min:2|max:2',
             'products.*.product_id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|numeric|min:1',
-        ],[
+        ], [
             'products.required' => 'Pilih produk !',
             'products.array' => 'Produk tidak valid !',
             'products.min' => 'Pilih produk !',
@@ -36,7 +36,7 @@ class RajaOngkirController extends Controller
         $product_ids = array_column($request->products, 'product_id');
         $store_count = Product::whereIn('id', $product_ids)->distinct('store_id')->count('store_id');
 
-        if($store_count != 1){
+        if ($store_count != 1) {
             return response([
                 'message' => 'The given data was invalid.',
                 'errors' => [
@@ -56,7 +56,7 @@ class RajaOngkirController extends Controller
 
         $origin = $products[0]->store->city_id;
         $destination = Address::find($request->address_id)->city_id;
-        
+
         $response = Http::post('https://api.rajaongkir.com/starter/cost', [
             'key' => env('RAJAONGKIR_API_KEY'),
             'origin' => $origin,
@@ -64,7 +64,7 @@ class RajaOngkirController extends Controller
             'weight' => $weight,
             'courier' => $request->courier
         ]);
-        
+
         return response([
             'success' => true,
             'response' => json_decode($response)
@@ -80,13 +80,13 @@ class RajaOngkirController extends Controller
         foreach ($response['rajaongkir']['results'] as $city) {
             Province::updateOrCreate([
                 'id' => $city['province_id']
-            ],[
+            ], [
                 'name' => $city['province']
             ]);
 
             City::updateOrCreate([
                 'id' => $city['city_id']
-            ],[
+            ], [
                 'province_id' => $city['province_id'],
                 'name' => $city['city_name'],
                 'type' => $city['type'],
@@ -99,19 +99,21 @@ class RajaOngkirController extends Controller
         ], 200);
     }
 
-    public function fetchCity(Request $request){
+    public function fetchCity(Request $request)
+    {
         $cities = City::all();
         return response()->json([
             'status' => 'success',
             'data' => $cities
         ]);
-        }
+    }
 
-    public function fetchProvinces(Request $request){
-       $provinces = Province::all();
-       return response()->json([
-        'status' => 'success',
-        'data' => $provinces
-       ]);     
+    public function fetchProvinces(Request $request)
+    {
+        $provinces = Province::all();
+        return response()->json([
+            'status' => 'success',
+            'data' => $provinces
+        ]);
     }
 }
