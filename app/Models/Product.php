@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
@@ -28,22 +28,27 @@ class Product extends Model
         'status',
         'stock',
     ];
+
     public function category()
     {
         return $this->belongsTo(ProductCategory::class, 'categories_id', 'id');
     }
+
     public function galleries()
     {
         return $this->hasMany(ProductGallery::class, 'products_id', 'id');
     }
+
     public function variation()
     {
         return $this->hasMany(ProductVariation::class, 'products_id', 'id');
     }
+
     public function rating()
     {
         return $this->hasMany(ProductRating::class, 'products_id', 'id');
     }
+
     public function store()
     {
         return $this->belongsTo(Store::class);
