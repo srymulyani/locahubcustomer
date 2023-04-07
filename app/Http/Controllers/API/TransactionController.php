@@ -317,7 +317,10 @@ class TransactionController extends Controller
             );
         }
 
-        return ResponseFormatter::success($storeTransaction, 'Resi Berhasil Di Ubah');
+        $data['store_transaction'] = $storeTransaction;
+        $data['rajaongkir'] = $response['rajaongkir']['result'];
+
+        return ResponseFormatter::success($data, 'Resi Berhasil Di Ubah');
     }
 
     // UPDATE STATUS STORE TRANSACTION & TRANSACTION => SELESAI
