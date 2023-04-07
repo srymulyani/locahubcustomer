@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use App\Services\Midtrans\CreateSnapTokenService;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
@@ -143,6 +144,17 @@ class TransactionController extends Controller
                 if (!$product) {
                     continue;
                 }
+
+                // CHECK PRODUCT QUANTITY
+                if ($request->products[$key]['quantity'] > $product->stock) {
+                    throw new Exception("Insufficient product stock ({$product->name})");
+                }
+
+                // UPDATE PRODUK STOCK && PRODUCT SOLD
+                $product->update([
+                    'stock' => $product->stock - $request->products[$key]['quantity'],
+                    'product_sold' => $product->product_sold - $request->products[$key]['quantity'],
+                ]);
 
                 $store_transaction = StoreTransaction::updateOrCreate([
                     'store_id' => $product->store_id,
