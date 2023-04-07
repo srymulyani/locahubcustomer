@@ -23,7 +23,7 @@ class MidtransController extends Controller
                     'payment_status' => 'dibayar',
                 ]);
                 StoreTransaction::where('transaction_code', $transaction->code)->update([
-                    'status' => 'menunggu konfirmasi'
+                    'status' => 'menunggu-konfirmasi'
                 ]);
             }
  
