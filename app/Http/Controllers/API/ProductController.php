@@ -17,6 +17,7 @@ class ProductController extends Controller
         $id =$request->input('id');
         $limit =$request->input('limit');
         $user_id =$request->input('user_id');
+        $store_id = $request->input('store_id');
         $name =$request->name;
         $price =$request->input('price');
         $products_information=$request->input('products_information');
@@ -52,7 +53,10 @@ class ProductController extends Controller
 
 
     $product=Product::with(['category:id,name','galleries','variation','rating','store.city:id,name']);
-       
+     
+    if ($store_id){
+        $product = $product->where('store_id', $store_id);
+    }
     if ($name){
         $product->where('products.name','like', '%' .$name. '%');
     }
@@ -65,9 +69,6 @@ class ProductController extends Controller
     if ($products_information){
         $product->where('product_information', 'like', '%'. $products_information. '%');
     }
-    // if ($categories){
-    //     $product->where('categories_id',$categories);   
-    // }
     if ($tags){
         $product->where('tags','like', '%' . $tags . '%');
     }
@@ -83,6 +84,7 @@ class ProductController extends Controller
     if($store){
         $product->where('name'.$store);
     }
+
 
     return ResponseFormatter::success(
         $product->paginate($limit),

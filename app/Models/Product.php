@@ -54,7 +54,7 @@ class Product extends Model
     }
 
     public function favorites(){
-        return $this->hasMany(ProductFavorite::class,'products_id','id');
+        return $this->hasMany(Favorite::class);
     }
 
     public function items(){

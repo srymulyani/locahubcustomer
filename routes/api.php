@@ -11,7 +11,7 @@ use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\ProductGalleryController;
 use App\Http\Controllers\API\ProductCategoryController;
 use App\Http\Controllers\API\EmailVerificationController;
-use App\Http\Controllers\API\{BankController, CartController, InvoiceController, MidtransController, RajaOngkirController, TransactionController};
+use App\Http\Controllers\API\{BankController, CartController, InvoiceController, MidtransController, RajaOngkirController, SocialiteController, TransactionController};
 use App\Http\Controllers\API\StoreController;
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\API\ProductRatingController;
@@ -52,7 +52,7 @@ Route::get('category', [ProductCategoryController::class, 'all']);
 //USER
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
-Route::post('login-sosmed', [UserController::class, 'loginSosmed']);
+Route::post('socialite/google', [SocialiteController::class, '_invoke']);
 Route::post('forgot-password', [ForgotPasswordController::class, 'ForgotPassword']);
 Route::post('reset-password', [ForgotPasswordController::class, 'reset']);
 // Route::post('reset-password', [ResetPasswordController::class,'ResetPassword' ]);
@@ -96,7 +96,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //FAVORITE PRODUCTS
     Route::get('products-favorites/{user_id}', [FavoriteController::class, 'index']);
     Route::post('products-favorites', [FavoriteController::class, 'store']);
-    Route::delete('delete-favorites/{product_id}', [FavoriteController::class, 'destroy']);
+    Route::delete('delete-favorites/{products_id}', [FavoriteController::class, 'destroy']);
 
     //STORE
     Route::post('create-store', [StoreController::class, 'create']);

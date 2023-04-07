@@ -18,7 +18,7 @@ class Transaction extends Model
      * @var string[]
      */
     protected $softDelete = true;
-    protected $table = "transactions";
+    protected $table = "transaction";
     protected $fillable = [
         'buyer_id',
         'address_id',
@@ -33,29 +33,49 @@ class Transaction extends Model
 
 
 
+    // public static function generateCode()
+    // {
+    //     $dateCode = self::TRANSACTIONCODE . '/' . date('Ymd') . '/' . General::integerToRoman(date('m')) . '/' . General::integerToRoman(date('d')) . '/';
+
+    //     $lastTransaction = self::select([\DB::raw('MAX(transaction.code) AS last_code')])
+    //         ->where('code', 'like', $dateCode . '%')
+    //         ->first();
+
+    //     $lastTransactionCode = !empty($lastTransaction) ? $lastTransaction['last_code'] : null;
+
+    //     $transactionCode = $dateCode . '00001';
+    //     if ($lastTransactionCode) {
+    //         $lastTransactionNumber = str_replace($dateCode, '', $lastTransactionCode);
+    //         $nextTransactionNumber = sprintf('%05d', (int) $lastTransactionNumber + 1);
+
+    //         $transactionCode = $dateCode . $nextTransactionNumber;
+    //     }
+    //     if (self::_isTransactionCodeExist($transactionCode)) {
+    //         return generateTransactionCode();
+    //     }
+
+    //     return $transactionCode;
+    // }
     public static function generateCode()
     {
-        $dateCode = self::TRANSACTIONCODE . '/' . date('Ymd') . '/' . General::integerToRoman(date('m')) . '/' . General::integerToRoman(date('d')) . '/';
+        $prefix = 'INV';
+        $uniqueString = uniqid('', true);
+        $code = $prefix . '/' . substr(str_shuffle($uniqueString), 0, 10);
 
-        $lastTransaction = self::select([\DB::raw('MAX(transactions.code) AS last_code')])
-            ->where('code', 'like', $dateCode . '%')
+        // periksa apakah nomor transaksi sudah pernah digunakan sebelumnya
+        $lastTransaction = self::select([\DB::raw('MAX(transaction.code) AS last_code')])
+            ->where('code', 'like', $prefix . '/%')
             ->first();
 
-        $lastTransactionCode = !empty($lastTransaction) ? $lastTransaction['last_code'] : null;
-
-        $transactionCode = $dateCode . '00001';
-        if ($lastTransactionCode) {
-            $lastTransactionNumber = str_replace($dateCode, '', $lastTransactionCode);
-            $nextTransactionNumber = sprintf('%05d', (int) $lastTransactionNumber + 1);
-
-            $transactionCode = $dateCode . $nextTransactionNumber;
-        }
-        if (self::_isTransactionCodeExist($transactionCode)) {
-            return generateTransactionCode();
+        if (!empty($lastTransaction) && $lastTransaction['last_code'] == $code) {
+            // nomor transaksi sudah pernah digunakan sebelumnya, buat nomor transaksi baru
+            return self::generateCode();
         }
 
-        return $transactionCode;
+        return $code;
     }
+
+
 
     private static function _isTransactionCodeExist($transactionCode)
     {

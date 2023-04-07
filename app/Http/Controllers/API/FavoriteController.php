@@ -13,7 +13,7 @@ class FavoriteController extends Controller
     {
         $favorite = new Favorite;
         $favorite->user_id = $request->input('user_id');
-        $favorite->product_id = $request->input('product_id');
+        $favorite->products_id = $request->input('products_id');
         $favorite->save();
         return response()->json([
             'message' => 'Favorite created successfully.'
@@ -21,16 +21,18 @@ class FavoriteController extends Controller
     }
 
     // Fetch Favorite Products
-    public function index($user_id)
+   public function index($user_id)
     {
-        $favorites = Favorite::where('user_id', $user_id)->get();
+        $favorites = Favorite::where('user_id', $user_id)
+                            ->with('products')
+                            ->get();
 
         return response()->json($favorites);
     }
     //destroy favorite products
-    public function destroy($product_id)
+    public function destroy($products_id)
     {
-        $favorite = Favorite::where('product_id',$product_id)->first();
+        $favorite = Favorite::where('products_id',$products_id)->first();
         if (!$favorite) {
             return response()->json([
                 'message' => 'Favorite not found.'
