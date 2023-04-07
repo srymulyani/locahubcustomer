@@ -18,6 +18,7 @@ class ProductController extends Controller
         $id = $request->input('id');
         $limit = $request->input('limit');
         $user_id = $request->input('user_id');
+        $store_id = $request->input('store_id');
         $name = $request->name;
         $price = $request->input('price');
         $products_information = $request->input('products_information');
@@ -52,7 +53,10 @@ class ProductController extends Controller
             ->when($request->best_seller, function ($query) use ($request) {
                 $query->orderBy('product_sold', $request->best_seller);
             });
-
+        if ($store_id){
+            $product = $product->where('store_id', $store_id);
+        }
+        
         if ($name) {
             $product->where('products.name', 'like', '%' . $name . '%');
         }
