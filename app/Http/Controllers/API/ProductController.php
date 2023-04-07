@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
+
+    // FETCHING DATA
+
     public function all(Request $request)
     {
         $id =$request->input('id');
@@ -28,31 +31,33 @@ class ProductController extends Controller
         $store=$request->input('store');
 
         $price_from = $request->input('price_from');
-        $price_to=$request->input('price_to');
-    
-    if($id) //Ambil data berdasarkan ID
-    {
-        $product =Product::with(['category','galleries','variation','rating','store'])->find($id);
-        if($product)
+        $price_to = $request->input('price_to');
+
+        if ($id) //Ambil data berdasarkan ID
         {
-            return ResponseFormatter::success(  
-                $product,
-                'Data produk berhasil diambil'     
-            );        
-      
+            $product = Product::with(['category', 'galleries', 'variation', 'rating', 'store'])->find($id);
+            if ($product) {
+                return ResponseFormatter::success(
+                    $product,
+                    'Data produk berhasil diambil'
+                );
+            } else {
+                return ResponseFormatter::error(
+                    null,
+                    'Data Produk Tidak Dapat di Tampilkan',
+                    404
+                );
+            }
         }
-        else {
-            return ResponseFormatter::error(
-                null,
-                'Data Produk Tidak Dapat di Tampilkan',
-                404
-            );
-        }
-    }
 
 
-    $product=Product::with(['category','galleries','variation','rating','store']); //Filltering Data
 
+      $product = Product::with(['category:id,name', 'galleries', 'variation', 'rating', 'store.city:id,name'])
+            // jika mengirimkan parameter best_seller HARUS bernilai 'asc' or 'desc'
+            ->when($request->best_seller, function ($query) use ($request) {
+                $query->orderBy('product_sold', $request->best_seller);
+            });
+       
     if ($name){
         $product->where('products.name','like', '%' .$name. '%');
     }
@@ -65,9 +70,7 @@ class ProductController extends Controller
     if ($products_information){
         $product->where('product_information', 'like', '%'. $products_information. '%');
     }
-    if ($categories){
-        $product->where('categories_id'.$categories);   
-    }
+
     if ($tags){
         $product->where('tags','like', '%' . $tags . '%');
     }
@@ -91,16 +94,19 @@ class ProductController extends Controller
     }
 
 
-    public function create(Request $request) 
+
+    //CREATE PRODUCT
+    public function create(Request $request)
+
     {
-        try{
-          
-                $validator= Validator::make($request->all(),[
+        try {
+
+            $validator = Validator::make($request->all(), [
                 'user_id' => 'required',
                 'name' => 'required|string|max:255',
                 'price' => 'required',
                 'products_information' => 'required|string',
-                'categories_id' =>'required',
+                'categories_id' => 'required',
                 'store_id' => 'required',
                 'tags' => 'required|string',
                 'galleries' => 'array',
@@ -110,17 +116,18 @@ class ProductController extends Controller
                 'wide' => 'required',
                 'height' => 'required',
                 'status' => 'required',
-
+                'stock' => 'required',
             ]);
-            if ($validator->fails()){
-            return ResponseFormatter::error([
-                'message'=>'Validation fails',
-                'errors' => $validator->errors()
-            ],'Authentication Failed',422);
-        }
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error([
+                    'message' => 'Validation fails',
+                    'errors' => $validator->errors()
+                ], 'Authentication Failed', 422);
+            }
 
             $product = Product::create([
-                
+
                 'user_id' => $request->user_id,
                 'name' => $request->name,
                 'price' => $request->price,
@@ -133,6 +140,7 @@ class ProductController extends Controller
                 'wide' => $request->wide,
                 'height' => $request->height,
                 'status' => $request->status,
+                'stock' => $request->stock,
             ]);
 
             
@@ -184,16 +192,16 @@ class ProductController extends Controller
                 $image->save();
             }
             foreach ($request->variation as $item) {
-                    ProductVariation::create([
-                        'products_id' => $product->id,
-                        'name' => $item['name'],
-                        'detail' => $item['detail'],
-                        'products_price' => $product->price,
-                    ]);  
-            }       
+                ProductVariation::create([
+                    'products_id' => $product->id,
+                    'name' => $item['name'],
+                    'detail' => $item['detail'],
+                    'products_price' => $product->price,
+                ]);
+            }
 
             return ResponseFormatter::success(
-                
+
                 $product->load('variation', 'galleries'),
                 'Produk berhasil ditambah'
             );
@@ -203,113 +211,76 @@ class ProductController extends Controller
                     "message" => "Something went wrong",
                     "errors" => $th->getMessage()
                 ],
-                "Produk Gagal ditambah", 500
+                "Produk Gagal ditambah",
+                500
             );
         };
     }
-    public function updateAll(Request $request){
 
-    //         if ($request->hasFile('image1')) {
-    //             $image = new ProductGallery();
-    //             $image->products_id = $product->id;
-    //             $path = $request->file('image1')->store('productGalleries');
-    //             $image->url = $path;
-    //             $image->save();
-    //         }
 
-    //         if ($request->hasFile('image2')) {
-    //             $image = new ProductGallery();
-    //             $image->products_id = $product->id;
-    //             $path = $request->file('image2')->store('productGalleries');
-    //             $image->url = $path;
-    //             $image->save();
-    //         }
 
-    //         if ($request->hasFile('image3')) {
-    //             $image = new ProductGallery();
-    //             $image->products_id = $product->id;
-    //             $path = $request->file('image3')->store('productGalleries');
-    //             $image->url = $path;
-    //             $image->save();
-    //         }
+ 
 
-    //         if ($request->hasFile('image4')) {
-    //             $image = new ProductGallery();
-    //             $image->products_id = $product->id;
-    //             $path = $request->file('image4')->store('productGalleries');
-    //             $image->url = $path;
-    //             $image->save();
-    //         }
-
-    //         if ($request->hasFile('image5')) {
-    //             $image = new ProductGallery();
-    //             $image->products_id = $product->id;
-    //             $path = $request->file('image5')->store('productGalleries');
-    //             $image->url = $path;
-    //             $image->save();
-    //         }
-
-    //         if ($request->hasFile('image6')) {
-    //             $image = new ProductGallery();
-    //             $image->products_id = $product->id;
-    //             $path = $request->file('image6')->store('productGalleries');
-    //             $image->url = $path;
-    //             $image->save();
-    //         }
-
+    // UPDATE PRODUCT
+    public function updateAll(Request $request)
+    {
         try {
+            $request->all();
+            $id = $request->id;
+            $product = Product::where('id', $id)->first();
 
-        $request->all();
-        $id = $request->id;
-        $product = Product::where('id',$id)->first();
+            $product->name = $request->name;
+            $product->price = $request->price;
+            $product->products_information = $request->products_information;
+            $product->categories_id = $request->categories_id;
+            $product->store_id = $request->store_id;
+            $product->tags = $request->tags;
+            $product->wide = $request->wide;
+            $product->long = $request->long;
+            $product->weight = $request->weight;
+            $product->status = $request->status;
+            $product->stock = $product->stock + $request->status ?? 0;
 
-        $product->name=$request->name;
-        $product->price=$request->price;
-        $product->products_information=$request->products_information;
-        $product->categories_id=$request->categories_id;
-        $product->store_id=$request->store_id;
-        $product->tags=$request->tags;
-        $product->wide=$request->wide;
-        $product->long=$request->long;
-        $product->weight=$request->weight;
-        $product->status=$request->status;
-        
-        $product->save();
+            $product->save();
 
             ProductVariation::where('products_id', $request->id)
-            ->update([
-                "products_id" => $request->id,
-                "name" => $request->name,
-                "detail" => $request->products_information,
-                "products_price" => $request->price,
-            ]);
+                ->update([
+                    "products_id" => $request->id,
+                    "name" => $request->name,
+                    "detail" => $request->products_information,
+                    "products_price" => $request->price,
+                ]);
 
-             return ResponseFormatter::success(
+            return ResponseFormatter::success(
                 // $product->load('variation', 'galleries'),
                 'Produk berhasil diubah'
             );
         } catch (\Throwable $th) {
-              return ResponseFormatter::error(
+            return ResponseFormatter::error(
                 [
                     "message" => "Something went wrong",
                     "errors" => $th->getMessage()
                 ],
-                "Produk Gagal diubah", 500
+                "Produk Gagal diubah",
+                500
             );
         };
     }
 
-    public function delete($id){
+
+    // DELETE PRODUCT
+    public function delete($id)
+    {
         try {
-        $product = Product::where('id',$id)->first();
-       
-        if ($product !=null){
-            $product->delete();
-        }
-       
-        return ResponseFormatter::success([
-            $product,
-            'Berhasil Menghapus Produk',
+            $product = Product::where('id', $id)->first();
+
+            if ($product != null) {
+                $product->delete();
+            }
+
+            return ResponseFormatter::success([
+                $product,
+                'Berhasil Menghapus Produk',
             ], 200);
         } catch (\Throwable $th) {
             return ResponseFormatter::error(
@@ -317,11 +288,9 @@ class ProductController extends Controller
                     "message" => "Something went wrong",
                     "errors" => $th->getMessage()
                 ],
-                "Produk Gagal dihapus", 500
-            );}
-    
-    
+                "Produk Gagal dihapus",
+                500
+            );
+        }
     }
-
-
 }
