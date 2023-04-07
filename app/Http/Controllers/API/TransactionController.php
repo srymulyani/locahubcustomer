@@ -150,9 +150,10 @@ class TransactionController extends Controller
                     throw new Exception("Insufficient product stock ({$product->name})");
                 }
 
-                // UPDATE PRODUK STOCK
+                // UPDATE PRODUK STOCK && PRODUCT SOLD
                 $product->update([
                     'stock' => $product->stock - $request->products[$key]['quantity'],
+                    'product_sold' => $product->product_sold - $request->products[$key]['quantity'],
                 ]);
 
                 $store_transaction = StoreTransaction::updateOrCreate([
