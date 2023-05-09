@@ -11,13 +11,13 @@ class Store extends Model
 {
     use HasFactory, SoftDeletes;
 
-    
-        /**
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var string[]
      */
-    protected $table ="store";
+    protected $table = "store";
     protected $fillable = [
         'user_id',
         'couriers_id',
@@ -36,25 +36,28 @@ class Store extends Model
         if (!$this->attributes["profile"]) return "";
         return url($this->attributes["profile"]);
     }
-    public function courier ()
+
+    public function courier()
     {
-        return $this->hasMany(Courier::class,'couriers_id','id');
+        return $this->hasMany(Courier::class, 'couriers_id', 'id');
     }
 
     public function city()
     {
         return $this->belongsTo(City::class);
     }
-    public function bank(){
-        return $this->hasMany(Bank::class,'store_id', 'id');
+
+    public function bank()
+    {
+        return $this->hasMany(Bank::class, 'store_id', 'id');
     }
     public function voucher()
     {
-        return $this->hasMany(Voucher::class,'store_id','id');
+        return $this->hasMany(Voucher::class, 'store_id', 'id');
     }
     public function day()
     {
-        return $this->hasMany(Day::class,'day_id','id');
+        return $this->hasMany(Day::class, 'day_id', 'id');
     }
 
     public function products()
@@ -66,10 +69,14 @@ class Store extends Model
     {
         return $this->hasManyThrough(Cart::class, Product::class);
     }
-    
+
     // public function getUrlAttribute($url)
     // {
     //     return config('app.url') . Storage::url($url);
     // }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

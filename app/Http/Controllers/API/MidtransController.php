@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
-use App\Models\{StoreTransaction, Transaction};
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Jobs\SuccessPaymentStoreJob;
 use App\Services\Midtrans\CallbackService;
+use App\Models\{StoreTransaction, Transaction};
 
 class MidtransController extends Controller
 {
@@ -18,13 +19,24 @@ class MidtransController extends Controller
             $transaction = $callback->getTransaction();
 
             if ($callback->isSuccess()) {
-                Transaction::where('code', $transaction->code)->update([
+                $transaction = Transaction::where('code', $transaction->code)
+                    ->with([
+                        'store_transactions' => function ($query) {
+                            $query->with(['store.user', 'items']);
+                        }
+                    ])
+                    ->first();
+
+
+                $transaction->update([
                     'payment_status' => 'dibayar',
                 ]);
 
                 StoreTransaction::where('transaction_id', $transaction->id)->update([
                     'status' => 'menunggu_konfirmasi'
                 ]);
+
+                dispatch(new SuccessPaymentStoreJob($transaction));
             }
 
             if ($callback->isExpire()) {
