@@ -36,7 +36,7 @@ class SuccessPaymentStoreJob implements ShouldQueue
     {
         foreach ($this->transaction->store_transactions as $st) {
             Mail::to($st->store->user->email)
-                ->send(new SuccessPaymentStoreMail($st));
+                ->send(new SuccessPaymentStoreMail($st, $this->transaction->code));
         }
     }
 }

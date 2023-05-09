@@ -11,16 +11,17 @@ class SuccessPaymentStoreMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $storeTransaction;
+    public $storeTransaction, $code;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($storeTransaction)
+    public function __construct($storeTransaction, $code)
     {
         $this->storeTransaction = $storeTransaction;
+        $this->code = $code;
     }
 
     /**
@@ -33,6 +34,7 @@ class SuccessPaymentStoreMail extends Mailable
         return $this->from(env('MAIL_FROM_ADDRESS'))
             ->view('emails.success-payment-store', [
                 'data' => $this->storeTransaction,
+                'code' => $this->code,
             ]);
     }
 }

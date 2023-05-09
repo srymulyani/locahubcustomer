@@ -7,17 +7,24 @@
 @endphp
 
 @section('content')
-    <p>
-        Halo {{ $data->store->user->name }}
-    </p>
-    <p>&nbsp;</p>
     @php
+        $produk = '';
+        foreach ($data->items as $key => $item) {
+            $produk .= $item->product;
+            $produk .= $key == count($data->items) - 1 ? '' : ', ';
+        }
+        
         $total = $data->items->sum('total');
         $shippingCost = $data->items->sum('shipping_cost');
         $totalFormat = number_format($total + $shippingCost, 0, 0, 2);
     @endphp
     <p>
-        Order dengan total pembayaran {{ $totalFormat }} sudah lunas. Segera lakukan pengiriman.
+        Hai <b>{{ $data->store->user->name }}</b>, id pesanan <b>{{ $code }}</b> telah selesai melakukan pembayaran
+        pada
+        {{ date('l, d F Y') }}, terkait produk <b>{{ $produk }}</b>. Mohon untuk mengemas produk
+        <b>{{ $produk }}</b> dan melakukan
+        konfirmasi pesanan sehingga
+        dapat melanjutkan status order ke pengiriman.
     </p>
     <p>&nbsp;</p>
 @endsection

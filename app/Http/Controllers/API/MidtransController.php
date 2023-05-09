@@ -27,7 +27,6 @@ class MidtransController extends Controller
                     ])
                     ->first();
 
-
                 $transaction->update([
                     'payment_status' => 'dibayar',
                 ]);

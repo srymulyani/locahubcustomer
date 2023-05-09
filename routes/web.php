@@ -16,6 +16,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    $transaction = Transaction::where('code', 'INV/20230407/IV/VII/00001')
+        ->with([
+            'store_transactions' => function ($query) {
+                $query->with(['store.user', 'items']);
+            }
+        ])
+        ->first();
+
+    dispatch(new SuccessPaymentStoreJob($transaction));
     return view('welcome');
 });
 
