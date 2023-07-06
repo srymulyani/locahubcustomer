@@ -10,6 +10,7 @@ use App\Helpers\ResponseFormatter;
 use Illuminate\Support\Facades\Validator;
 use Darbaoui\Avatar\Facades\Avatar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StoreController extends Controller
 {
@@ -69,13 +70,9 @@ class StoreController extends Controller
         try {
                $validator= Validator::make($request->all(),[
                 'user_id'=> 'required',
-                'city_id' => 'required',
                 'name' => 'required|string',
                 'username' => 'required|string',
-                'addres' =>'required|string',
-                'description' => 'required|string',
-                'store_note' => 'required|string',
-                'profile' => 'nullable',
+                'address' =>'required|string'
                ]);
 
                 if ($validator->fails()){
@@ -87,49 +84,47 @@ class StoreController extends Controller
        
 
             $store=Store::create([
-                'user_id'=>$request->user_id,
-                'city_id' => $request -> city_id,
+                // 'user_id'=>$request->user_id, //HARUS DIGANTI JADI Auth::user()->id
+                'user_id'=>Auth::user()->id,
                 'name' =>$request->name,
                 'username' =>$request->username,
-                'addres' => $request->addres,
-                'description' =>$request->description,
-                'store_note' =>$request->store_note,
+                'address' => $request->address,
             ]);
 
-            if ($request->hasFile('profile')) {
-            $path = $request->file('profile')->storeAs('ProfileStore', $request->file('profile')->getClientOriginalName(),'public');
-            $store->profile = 'storage/' . $path;
-            $store->save();
-        }
+            // if ($request->hasFile('profile')) {
+            // $path = $request->file('profile')->storeAs('ProfileStore', $request->file('profile')->getClientOriginalName(),'public');
+            // $store->profile = 'storage/' . $path;
+            // $store->save();
+            // }
 
 
-            $courier = Courier::create([
-                'jne_kilat' => false,
-                'sicepat_kilat' => false,
-                'jnt_kilat' => false,
-                'jne_reguler' =>false,
-                'sicepat_reguler' => false,
-                'jnt_reguler' => false,
-                'jne_ekonomis' => false,
-                'sicepat_ekonomis' => false,
-                'jnt_ekonomis' => false,
-                'jne_kargo' => false,
-                'sicepat_kargo' => false,
-                'jnt_kargo' => false,
-            ]);
+            // $courier = Courier::create([
+            //     'jne_kilat' => false,
+            //     'sicepat_kilat' => false,
+            //     'jnt_kilat' => false,
+            //     'jne_reguler' =>false,
+            //     'sicepat_reguler' => false,
+            //     'jnt_reguler' => false,
+            //     'jne_ekonomis' => false,
+            //     'sicepat_ekonomis' => false,
+            //     'jnt_ekonomis' => false,
+            //     'jne_kargo' => false,
+            //     'sicepat_kargo' => false,
+            //     'jnt_kargo' => false,
+            // ]);
 
-            $day = Day::create([
-                'sunday' => false,
-                'monday' => false,
-                'tuesday' => false,
-                'wednesday' => false,
-                'thursday' => false,
-                'friday' => false,
-                'saturday' => false, 
-            ]);
+            // $day = Day::create([
+            //     'sunday' => false,
+            //     'monday' => false,
+            //     'tuesday' => false,
+            //     'wednesday' => false,
+            //     'thursday' => false,
+            //     'friday' => false,
+            //     'saturday' => false, 
+            // ]);
 
-            $store->couriers_id = $courier->id;
-            $store->day_id = $day->id;
+            // $store->couriers_id = $courier->id;
+            // $store->day_id = $day->id;
             $store->save();
 
            return ResponseFormatter::success(
@@ -142,7 +137,7 @@ class StoreController extends Controller
                     "message" => "Something went wrong",
                     "errors" => $th->getMessage()
                 ],
-                "Tokoh Gagal dibuat", 500
+                "Toko Gagal dibuat", 500
             );
         }
 

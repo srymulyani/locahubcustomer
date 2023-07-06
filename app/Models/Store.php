@@ -20,15 +20,9 @@ class Store extends Model
     protected $table = "store";
     protected $fillable = [
         'user_id',
-        'couriers_id',
-        'day_id',
-        'city_id',
         'name',
-        'profile',
         'username',
-        'addres',
-        'description',
-        'store_note',
+        'address'
     ];
 
     public function getUrlAttribute()
@@ -37,15 +31,15 @@ class Store extends Model
         return url($this->attributes["profile"]);
     }
 
-    public function courier()
-    {
-        return $this->hasMany(Courier::class, 'couriers_id', 'id');
-    }
+    // public function courier()
+    // {
+    //     return $this->hasMany(Courier::class, 'couriers_id', 'id');
+    // }
 
-    public function city()
-    {
-        return $this->belongsTo(City::class);
-    }
+    // public function city()
+    // {
+    //     return $this->belongsTo(City::class);
+    // }
 
     public function bank()
     {
@@ -55,10 +49,11 @@ class Store extends Model
     {
         return $this->hasMany(Voucher::class, 'store_id', 'id');
     }
-    public function day()
-    {
-        return $this->hasMany(Day::class, 'day_id', 'id');
-    }
+    
+    // public function day()
+    // {
+    //     return $this->hasMany(Day::class, 'day_id', 'id');
+    // }
 
     public function products()
     {
