@@ -91,11 +91,25 @@ class UserController extends Controller
                     ], 'Authentication Failed', 500);
                 }     
     }
-    public function fetch(){ //ambil data user
-        return ResponseFormatter::success([
-            'user' =>Auth::user(),
-            'Data user berhasil diambil'
-        ]);
+    public function fetch($id){ //ambil data user
+
+            $user = User::where('id',$id)->first();
+            if($user){
+                return ResponseFormatter::success(
+                    $user,
+                    'User berhasil ditemukan!',
+                );
+            }else{
+                return ResponseFormatter::error(
+                null,
+                'User Gagal tidak dapat ditampilkan',404
+            );
+            }
+
+        // return ResponseFormatter::success([
+        //     'user' =>Auth::user(),
+        //     'Data user berhasil diambil'
+        // ]);
     }
     public function updateProfile(Request $request){
         $data = $request->all();

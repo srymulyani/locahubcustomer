@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-// use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Store extends Model
 {
@@ -20,26 +19,32 @@ class Store extends Model
     protected $table = "store";
     protected $fillable = [
         'user_id',
+        'couriers_id',
+        'day_id',
+        'city_id',
         'name',
+        'profile',
         'username',
-        'address'
+        'address',
+        'description',
+        'store_note',
     ];
 
     public function getUrlAttribute()
     {
         if (!$this->attributes["profile"]) return "";
-        return url($this->attributes["profile"]);
+        return asset($this->attributes["profile"]);
     }
 
-    // public function courier()
-    // {
-    //     return $this->hasMany(Courier::class, 'couriers_id', 'id');
-    // }
+    public function courier()
+    {
+        return $this->hasMany(Courier::class, 'couriers_id', 'id');
+    }
 
-    // public function city()
-    // {
-    //     return $this->belongsTo(City::class);
-    // }
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
 
     public function bank()
     {
@@ -50,10 +55,10 @@ class Store extends Model
         return $this->hasMany(Voucher::class, 'store_id', 'id');
     }
     
-    // public function day()
-    // {
-    //     return $this->hasMany(Day::class, 'day_id', 'id');
-    // }
+    public function day()
+    {
+        return $this->hasMany(Day::class, 'day_id', 'id');
+    }
 
     public function products()
     {

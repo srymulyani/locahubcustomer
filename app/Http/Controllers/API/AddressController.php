@@ -59,7 +59,7 @@ class AddressController extends Controller
                 
             ]);
 
-            return ResponseFormatter::success($address, 'Address Added Successfully');
+            return ResponseFormatter::success($address, 'Address Added Successfully', 200);
         } catch (\Throwable $th) {
             print($th);
             return ResponseFormatter::error(null, "Address Added Failed", 404);
@@ -75,7 +75,7 @@ class AddressController extends Controller
         $name = $request->input('name');
            
         if($id){
-            $address =Address::find($id);
+            $address =Address::where('user_id',$id)->get();
             if($address){
                 return ResponseFormatter::success(
                     $address,

@@ -16,9 +16,14 @@ class CreateStoreTable extends Migration
         Schema::create('store', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id');
+            $table->bigInteger('couriers_id')->nullable();
+            $table->bigInteger('day_id')->nullable();
             $table->string('name');
+            $table->string('profile')->nullable();
             $table->string('username');
             $table->string('address');
+            $table->longText('description')->nullable();
+            $table->string('store_note')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

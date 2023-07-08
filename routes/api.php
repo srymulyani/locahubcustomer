@@ -59,7 +59,7 @@ Route::post('reset-password', [ForgotPasswordController::class, 'reset']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('user',  [UserController::class, 'fetch']);
+    Route::get('user/{id}',  [UserController::class, 'fetch']);
     Route::post('user', [UserController::class, 'updateProfile']);
     Route::post('logout', [UserController::class, 'logout']);
     Route::post('changePassword', [UserController::class, 'changePassword']);
@@ -99,6 +99,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('delete-favorites/{products_id}', [FavoriteController::class, 'destroy']);
 
     //STORE
+    Route::get('store/{id}', [StoreController::class, 'show']);
     Route::post('create-store', [StoreController::class, 'create']);
     Route::post('store-update', [StoreController::class, 'update']);
 

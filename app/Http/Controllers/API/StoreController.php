@@ -16,13 +16,14 @@ class StoreController extends Controller
 {
     // FETCHING STORE DATA
         public function show(Request $request){
+        
         $id = $request->id;
-        $limit =$request->input('limit');
-        $city_name = $request->city_name;
-        $name = $request->name;
+        // $city_name = $request->city_name;
+        // $name = $request->name;
+        // $limit =$request->input('limit');
 
         if($id){
-        $store = Store::with(['city'])->find($id);
+        $store=Store::where('user_id',$id)->first();
         if($store){
             return ResponseFormatter::success(
                 $store,
@@ -36,32 +37,32 @@ class StoreController extends Controller
         }
         }
      
-        $stores = Store::with('city', 'products') //FILTERING BY CITY NAME
-            ->when($city_name, function ($query, $city_name) {
-                return $query->whereHas('city', function ($query) use ($city_name) {
-                    $query->where('name', 'like', '%' . $city_name . '%');
-                });
-            })
-            ->when($name, function ($query, $name) {
-                return $query->where('name', 'like', '%' . $name . '%');
-            })
-            ->get();
+        // $stores = Store::with('city', 'products') //FILTERING BY CITY NAME
+        //     ->when($city_name, function ($query, $city_name) {
+        //         return $query->whereHas('city', function ($query) use ($city_name) {
+        //             $query->where('name', 'like', '%' . $city_name . '%');
+        //         });
+        //     })
+        //     ->when($name, function ($query, $name) {
+        //         return $query->where('name', 'like', '%' . $name . '%');
+        //     })
+        //     ->get();
 
-        $response = [];
+        // $response = [];
 
-        foreach ($stores as $store) {
-            $city = $store->city->name;
-            $name = $store->name;
-            $products = $store->products;
+        // foreach ($stores as $store) {
+        //     $city = $store->city->name;
+        //     $name = $store->name;
+        //     $products = $store->products;
 
-            $response[] = [
-                'city' => $city,
-                'name' => $name,
-                'products' => $products
-            ];
-        }
+        //     $response[] = [
+        //         'city' => $city,
+        //         'name' => $name,
+        //         'products' => $products
+        //     ];
+        // }
 
-        return response()->json($response);
+        // return response()->json($response);
 
     }
 
@@ -89,6 +90,7 @@ class StoreController extends Controller
                 'name' =>$request->name,
                 'username' =>$request->username,
                 'address' => $request->address,
+                'profile' => 'default.jpg'
             ]);
 
             // if ($request->hasFile('profile')) {
@@ -151,12 +153,12 @@ class StoreController extends Controller
 
             $store=Store::where('id',$id)->first();
 
-            $store->user_id = $request->user_id;
+            // $store->user_id = $request->user_id;
           
 
             if($request->username !=null){
                 $request->validate([
-                    'username' => 'unique:stores'
+                    'username' => 'unique:store'
                 ]);
                 $username = $request->username;
             }else{
@@ -168,7 +170,7 @@ class StoreController extends Controller
                     'profile' => 'mimes:jpeg,jpg,png,gif',
                 ]);
 
-                $path = $request->file('profile')->store('StoreImage');
+                $path = $request->file('profile')->store('public');
             }else{
                 $path = $store['profile'];
             }
@@ -179,10 +181,16 @@ class StoreController extends Controller
                 $name = $store['name'];
             }
 
-            if($request->addres != null){
-                $addres = $request->addres;
+            if($request->address != null){
+                $address = $request->address;
             }else{
-                $addres = $store['addres'];
+                $address = $store['address'];
+            }
+
+            if($request->description !=null){
+                $description = $request->description;
+            }else{
+                $description = $store['description'];
             }
 
             if($request->store_note !=null){
@@ -192,15 +200,16 @@ class StoreController extends Controller
             }
 
             $store->name = $name;
-            $store->profile = $path;
+            $store->profile = explode("/", $path)[1];
             $store->username = $username;
-            $store->addres = $addres;
+            $store->address = $address;
+            $store->description = $description;
             $store->store_note = $store_note;
 
             $store->save();
             return ResponseFormatter::success(
                 $store,
-                'Tokoh Berhasil diubah',
+                'Toko Berhasil diubah',
             );
 
 
@@ -210,7 +219,7 @@ class StoreController extends Controller
                     "message" => "Something went wrong",
                     "errors" => $th->getMessage()
                 ],
-                "Tokoh Gagal  diubah", 500
+                "Toko Gagal  diubah", 500
             );
         }
     }
