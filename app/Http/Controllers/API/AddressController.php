@@ -115,10 +115,10 @@ class AddressController extends Controller
         $address->address =  $request->address;
         $address->complete_address =  $request->complete_address;
         $address->address_detail =  $request->address_detail;
-        $address->postcode =  $request->postcode;
-        $address->district =  $request->district;
-        $address->city_id = $request->city_id;
-        $address->province_id =  $request->province_id;
+        // $address->postcode =  $request->postcode;
+        // $address->district =  $request->district;
+        // $address->city_id = $request->city_id;
+        // $address->province_id =  $request->province_id;
         
         $address->save();
 

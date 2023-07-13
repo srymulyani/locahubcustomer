@@ -19,7 +19,7 @@ class ProductCategoryController extends Controller
 
         if ($id) //Ambil data berdasarkan ID
         {
-            $category = ProductCategory::with(['products'])->find($id);
+            $category = ProductCategory::where('store_id',$id)->get();
             if ($category) {
                 return ResponseFormatter::success(
                     $category,

@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
+use App\Models\Day;
 use App\Models\Store;
 use App\Models\Courier;
-use App\Models\Day;
-use App\Helpers\ResponseFormatter;
-use Illuminate\Support\Facades\Validator;
-use Darbaoui\Avatar\Facades\Avatar;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Helpers\ResponseFormatter;
+use Darbaoui\Avatar\Facades\Avatar;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class StoreController extends Controller
 {
@@ -170,7 +173,14 @@ class StoreController extends Controller
                     'profile' => 'mimes:jpeg,jpg,png,gif',
                 ]);
 
-                $path = $request->file('profile')->store('public');
+                $image = Image::make($request->file('profile'))->fit(300);
+
+                if (Storage::disk('public')->exists($store['profile'])) {
+                    Storage::disk('public')->delete($store['profile']);
+                }
+
+                $path = Str::random(28).".jpg";
+                $image->save(storage_path('app/public/'.$path));
             }else{
                 $path = $store['profile'];
             }
@@ -200,7 +210,7 @@ class StoreController extends Controller
             }
 
             $store->name = $name;
-            $store->profile = explode("/", $path)[1];
+            $store->profile = $path;
             $store->username = $username;
             $store->address = $address;
             $store->description = $description;

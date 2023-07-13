@@ -68,11 +68,27 @@ class BankController extends Controller
         $limit = $request->input('limit');
         $name = $request->input('name');
 
+        if ($users_id) {
+            $bank = Bank::where('users_id', $users_id)->get();
+            if($bank){
+                return ResponseFormatter::success(
+                    $bank,
+                    'Data Bank berhasil diambil'
+                );
+            }else{
+                return ResponseFormatter::error(
+                    null,
+                    'Data Bank tidak ada',
+                    404,
+                );
+            }
+        }
+        
         $bank = Bank::query();
 
-        if ($users_id) {
-            $bank->where('users_id', $users_id);
-        }
+        // if ($users_id) {
+        //     $bank->where('users_id', $users_id);
+        // }
 
         if ($name) {
             $bank->where('name', 'like', '%' . $name . '%');
