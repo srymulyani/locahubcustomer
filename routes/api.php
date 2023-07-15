@@ -11,7 +11,7 @@ use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\ProductGalleryController;
 use App\Http\Controllers\API\ProductCategoryController;
 use App\Http\Controllers\API\EmailVerificationController;
-use App\Http\Controllers\API\{BankController, CartController, InvoiceController, MidtransController, RajaOngkirController, SocialiteController, TransactionController};
+use App\Http\Controllers\API\{BankController, CartController, CourierController, InvoiceController, MidtransController, RajaOngkirController, SocialiteController, TransactionController};
 use App\Http\Controllers\API\StoreController;
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\API\ProductRatingController;
@@ -138,3 +138,6 @@ Route::get('/banner/{id}', [BannerController::class, 'show']);
 
 //Invoice
 Route::get('/print-invoice/{id}', [InvoiceController::class, 'printInvoice']);
+
+//Courier
+Route::get('/courier', [CourierController::class, 'all']);

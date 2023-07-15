@@ -16,6 +16,7 @@ class CreateCouriersTable extends Migration
         Schema::create('couriers', function (Blueprint $table) {
             $table->id();
 
+            $table->bigInteger('stores_id');
             $table->boolean('jne_kilat')->default(false);
             $table->boolean('sicepat_kilat')->default(false);
             $table->boolean('jnt_kilat')->default(false);

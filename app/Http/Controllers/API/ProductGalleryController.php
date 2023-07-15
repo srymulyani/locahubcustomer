@@ -4,9 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use App\Http\Controllers\Controller;
 use App\Models\ProductGallery;
+use App\Helpers\ResponseFormatter;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 
 class ProductGalleryController extends Controller
@@ -48,7 +49,8 @@ class ProductGalleryController extends Controller
         $images[] = $image;
     }
 
-    return response()->json(['result' => $images]);
+    // return response()->json(['result' => $images]);
+    return ResponseFormatter::success(response()->json(['result' => $images]), 'Image Added Successfully', 200);
     }
 }
 

@@ -15,10 +15,22 @@ class Courier extends Model
      *
      * @var string[]
      */
-   protected $guarded = [
-    'deleted_at',
-    'created_at',
-    'updated_at',
-   ];
+    protected $softDelete = true;
+    protected $table="couriers";
+    protected $fillable = [
+        'stores_id',
+        'jne_kilat',
+        'sicepat_kilat',
+        'jnt_kilat',
+        'jne_reguler',
+        'sicepat_reg',
+        'jnt_reg',
+        'jne_ekonomis',
+        'sicepat_ekonomis',
+        'jne_kargo',
+        'siceppat_kargo',
+        'jnt_kargo',
+        'province_id',
+    ];
 
 }
