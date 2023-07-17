@@ -141,3 +141,4 @@ Route::get('/print-invoice/{id}', [InvoiceController::class, 'printInvoice']);
 
 //Courier
 Route::get('/courier', [CourierController::class, 'all']);
+Route::post('/courier', [CourierController::class, 'create']);

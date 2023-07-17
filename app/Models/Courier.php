@@ -28,9 +28,9 @@ class Courier extends Model
         'jne_ekonomis',
         'sicepat_ekonomis',
         'jne_kargo',
-        'siceppat_kargo',
+        'sicepat_kargo',
         'jnt_kargo',
-        'province_id',
+        'jnt_ekonomis'
     ];
 
 }
