@@ -119,8 +119,6 @@ class AddressController extends Controller
         // $address->district =  $request->district;
         // $address->city_id = $request->city_id;
         // $address->province_id =  $request->province_id;
-        
-        $address->save();
 
        $addressAkun = Address::where('user_id', $request->user_id)->get();
        if ($request->choice == 1) {
@@ -133,6 +131,8 @@ class AddressController extends Controller
        }else {
         $address->choice = $request->choice;
        }
+
+       $address->save();
        
          return ResponseFormatter::success($address, 'Alamat Berhasil Diubah');
 
