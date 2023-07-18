@@ -68,31 +68,14 @@ class VoucherController extends Controller
         $end_date = $request->end_date;
         $store_id = $request->store_id;
         
-        if($id){
-        $vouchers = Voucher::where('id', $id)->find($id);
-        if($vouchers)
-        {
-            return ResponseFormatter::success(  
-                $vouchers,
-                'Voucher tersedia'     
-            );        
-      
-        }
-        else {
-            return ResponseFormatter::error(
-                null,
-                'Voucher tidak tersedia',
-                404
-            );
-        }
-    }   
-
-        if($store_id){
-            $vouchers = Voucher::where('store_id', $store_id)->get();
+        if($start_date && $end_date){ 
+            $vouchers = Voucher::whereDate('start_date','<=', $start_date)
+            ->whereDate('end_date','>=', $start_date)
+            ->where('store_id', $store_id)->get();
             if($vouchers){
                 return ResponseFormatter::success(
                     $vouchers,
-                    'Voucher berhasil diambil ',
+                    'Voucher berhasil diambil',
                 );
             }else{
                   return ResponseFormatter::error(
@@ -101,9 +84,9 @@ class VoucherController extends Controller
                 );
             }
         }
-
         if($start_date){ 
-            $vouchers = Voucher::where('start_date', $start_date)->orderBy('id', 'DESC')->get();
+            $vouchers = Voucher::whereDate('start_date','>', $start_date)
+            ->where('store_id', $store_id)->get();
             if($vouchers){
                 return ResponseFormatter::success(
                     $vouchers,
@@ -117,7 +100,8 @@ class VoucherController extends Controller
             }
         }
         if($end_date){
-            $vouchers = Voucher::where('end_date', $end_date)->orderBy('id', 'DESC')->get(); 
+            $vouchers = Voucher::whereDate('end_date','<', $end_date)
+            ->where('store_id', $store_id)->get();; 
             if($vouchers){
              return ResponseFormatter::success(
                     $vouchers,
