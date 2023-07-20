@@ -37,7 +37,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //PRODUCTS
 Route::get('products', [ProductController::class, 'all']);
 Route::post('products', [ProductController::class, 'create']);
-Route::post('updateProducts', [ProductController::class, 'updateAll']);
+Route::post('products/update', [ProductController::class, 'updateAll']);
 Route::delete('products/{id}', [ProductController::class, 'delete']);
 
 //GET STORE WITHOUT AUTHENTIFICATION

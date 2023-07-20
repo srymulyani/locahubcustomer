@@ -173,27 +173,27 @@ class ProductController extends Controller
             $id = $request->id;
             $product = Product::where('id', $id)->first();
 
-            $product->name = $request->name;
-            $product->price = $request->price;
-            $product->products_information = $request->products_information;
-            $product->categories_id = $request->categories_id;
-            $product->store_id = $request->store_id;
-            $product->tags = $request->tags;
-            $product->wide = $request->wide;
-            $product->long = $request->long;
-            $product->weight = $request->weight;
+            // $product->name = $request->name;
+            // $product->price = $request->price;
+            // $product->products_information = $request->products_information;
+            // $product->categories_id = $request->categories_id;
+            // $product->store_id = $request->store_id;
+            // $product->tags = $request->tags;
+            // $product->wide = $request->wide;
+            // $product->long = $request->long;
+            // $product->weight = $request->weight;
             $product->status = $request->status;
-            $product->stock = $product->stock + $request->status ?? 0;
+            // $product->stock = $product->stock + $request->status ?? 0;
 
             $product->save();
 
-            ProductVariation::where('products_id', $request->id)
-                ->update([
-                    "products_id" => $request->id,
-                    "name" => $request->name,
-                    "detail" => $request->products_information,
-                    "products_price" => $request->price,
-                ]);
+            // ProductVariation::where('products_id', $request->id)
+            //     ->update([
+            //         "products_id" => $request->id,
+            //         "name" => $request->name,
+            //         "detail" => $request->products_information,
+            //         "products_price" => $request->price,
+            //     ]);
 
             return ResponseFormatter::success(
                 // $product->load('variation', 'galleries'),
