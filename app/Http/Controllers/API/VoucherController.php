@@ -117,15 +117,23 @@ class VoucherController extends Controller
     }
 
     public function destroy($id){
-        $voucher = Voucher::find($id);
-        if (!$voucher) {
-            return response()->json([
-                'message' => 'Voucher not found.'
-            ], 404);
+        try {
+            $voucher = Voucher::find($id);
+            if ($voucher != null) {
+                $voucher->delete();
+            }
+            return ResponseFormatter::success([
+                $voucher,
+                'Berhasil Menghapus Promo',
+                ], 200);
+        } catch (\Throwable $th) {
+            return ResponseFormatter::error(
+                [
+                    "message" => "Something went wrong",
+                    "errors" => $th->getMessage()
+                ],
+                "Promo Tidak dapat dihapus", 500
+            );
         }
-        $voucher->delete();
-        return response()->json([
-            'message' => 'Voucher deleted successfully.'
-        ]);
     }
 }
