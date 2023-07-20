@@ -76,7 +76,8 @@ class StoreController extends Controller
                 'user_id'=> 'required',
                 'name' => 'required|string',
                 'username' => 'required|string',
-                'address' =>'required|string'
+                'address' =>'required|string',
+                'profile' => 'nullable'
                ]);
 
                 if ($validator->fails()){
@@ -90,9 +91,12 @@ class StoreController extends Controller
             $store=Store::create([
                 // 'user_id'=>$request->user_id, //HARUS DIGANTI JADI Auth::user()->id
                 'user_id'=>Auth::user()->id,
+                'city_id' => 1,
                 'name' =>$request->name,
                 'username' =>$request->username,
                 'address' => $request->address,
+                'description' => 'toko yang keren',
+                'store_note' => 'keren',
                 'profile' => 'default.jpg'
             ]);
 
@@ -103,38 +107,39 @@ class StoreController extends Controller
             // }
 
 
-            // $courier = Courier::create([
-            //     'jne_kilat' => false,
-            //     'sicepat_kilat' => false,
-            //     'jnt_kilat' => false,
-            //     'jne_reguler' =>false,
-            //     'sicepat_reguler' => false,
-            //     'jnt_reguler' => false,
-            //     'jne_ekonomis' => false,
-            //     'sicepat_ekonomis' => false,
-            //     'jnt_ekonomis' => false,
-            //     'jne_kargo' => false,
-            //     'sicepat_kargo' => false,
-            //     'jnt_kargo' => false,
-            // ]);
+            $courier = Courier::create([
+                'stores_id' => $store->id,
+                'jne_kilat' => false,
+                'sicepat_kilat' => false,
+                'jnt_kilat' => false,
+                'jne_reguler' =>false,
+                'sicepat_reg' => false,
+                'jnt_reg' => false,
+                'jne_ekonomis' => false,
+                'sicepat_ekonomis' => false,
+                'jnt_ekonomis' => false,
+                'jne_kargo' => false,
+                'sicepat_kargo' => false,
+                'jnt_kargo' => false,
+            ]);
 
-            // $day = Day::create([
-            //     'sunday' => false,
-            //     'monday' => false,
-            //     'tuesday' => false,
-            //     'wednesday' => false,
-            //     'thursday' => false,
-            //     'friday' => false,
-            //     'saturday' => false, 
-            // ]);
+            $day = Day::create([
+                'sunday' => false,
+                'monday' => false,
+                'tuesday' => false,
+                'wednesday' => false,
+                'thursday' => false,
+                'friday' => false,
+                'saturday' => false, 
+            ]);
 
-            // $store->couriers_id = $courier->id;
-            // $store->day_id = $day->id;
+            $store->couriers_id = $courier->id;
+            $store->day_id = $day->id;
             $store->save();
 
            return ResponseFormatter::success(
             $store,
-            'Tokoh Berhasil dibuat, Selamat Berjualan'
+            'Toko berhasil dibuat, selamat berjualan'
            );
         } catch (\Throwable $th) {
              return ResponseFormatter::error(

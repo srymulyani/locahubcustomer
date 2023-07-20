@@ -18,7 +18,7 @@ class Transaction extends Model
      * @var string[]
      */
     protected $softDelete = true;
-    protected $table = "transaction";
+    protected $table = "transactions";
     protected $fillable = [
         'buyer_id',
         'address_id',
