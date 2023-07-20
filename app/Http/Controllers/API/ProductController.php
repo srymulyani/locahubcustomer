@@ -48,7 +48,7 @@ class ProductController extends Controller
             }
         }
 
-        $product = Product::with(['category:id,name', 'galleries', 'variation', 'rating', 'store.city:id,name'])
+        $product = Product::with(['category', 'galleries', 'variation', 'rating', 'store.city:id,name'])
             // jika mengirimkan parameter best_seller HARUS bernilai 'asc' or 'desc'
             ->when($request->best_seller, function ($query) use ($request) {
                 $query->orderBy('product_sold', $request->best_seller);

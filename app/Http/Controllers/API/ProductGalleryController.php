@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Product;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\ProductGallery;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -34,8 +36,15 @@ class ProductGalleryController extends Controller
     if ($request->hasFile('image1')) {
         $image = new ProductGallery();
         $image->products_id = $productId;
-        $path = $request->file('image1')->storeAs('ProductGalleries', $request->file('image1')->getClientOriginalName(),'public');
-        $image->url = 'storage/' . $path;
+
+        $compressImage = Image::make($request->file('image1'))->resize(300, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $path = Str::random(28).".jpg";
+        
+        $compressImage->save(storage_path('app/public/ProductGalleries/'.$path));
+        $image->url = 'storage/ProductGalleries/' . $path;
         $image->save();
         $images[] = $image;
     }

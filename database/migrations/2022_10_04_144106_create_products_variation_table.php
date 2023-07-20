@@ -18,7 +18,7 @@ class CreateProductsVariationTable extends Migration
             $table->bigInteger('products_id');
             $table->string('name');
             $table->string('detail');
-            $table->integer('products_price');
+            $table->double('products_price');
             $table->softDeletes();
             $table->timestamps();
         });
