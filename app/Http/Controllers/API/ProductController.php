@@ -73,7 +73,7 @@ class ProductController extends Controller
             $product->where('tags', 'like', '%' . $tags . '%');
         }
         if ($status) {
-            $product->where('status', '%', 'like' . $status . '%');
+            $product->where('status', $status);
         }
         if ($variation) {
             $product->where('variation', '%', 'like' . $variation . '%');

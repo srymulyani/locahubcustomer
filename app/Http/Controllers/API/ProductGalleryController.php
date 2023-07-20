@@ -52,8 +52,15 @@ class ProductGalleryController extends Controller
     if ($request->hasFile('image2')) {
         $image = new ProductGallery();
         $image->products_id = $productId;
-        $path = $request->file('image2')->storeAs('ProductGalleries', $request->file('image2')->getClientOriginalName(),'public');
-        $image->url = 'storage/' . $path;
+
+        $compressImage = Image::make($request->file('image2'))->resize(300, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $path = Str::random(28).".jpg";
+        
+        $compressImage->save(storage_path('app/public/ProductGalleries/'.$path));
+        $image->url = 'storage/ProductGalleries/' . $path;
         $image->save();
         $images[] = $image;
     }
