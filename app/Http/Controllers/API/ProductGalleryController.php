@@ -23,6 +23,10 @@ class ProductGalleryController extends Controller
     $validatedData = $request->validate([
         'image1' => 'required|mimes:jpg,jpeg,png,svg|max:2048',
         'image2' => 'nullable|mimes:jpg,jpeg,png,svg|max:2048',
+        'image3' => 'nullable|mimes:jpg,jpeg,png,svg|max:2048',
+        'image4' => 'nullable|mimes:jpg,jpeg,png,svg|max:2048',
+        'image5' => 'nullable|mimes:jpg,jpeg,png,svg|max:2048',
+        'image6' => 'nullable|mimes:jpg,jpeg,png,svg|max:2048',
     ], [
         'image1.required' => 'The image1 field is required.',
     ]);
@@ -54,6 +58,70 @@ class ProductGalleryController extends Controller
         $image->products_id = $productId;
 
         $compressImage = Image::make($request->file('image2'))->resize(300, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $path = Str::random(28).".jpg";
+        
+        $compressImage->save(storage_path('app/public/ProductGalleries/'.$path));
+        $image->url = 'storage/ProductGalleries/' . $path;
+        $image->save();
+        $images[] = $image;
+    }
+
+    if ($request->hasFile('image3')) {
+        $image = new ProductGallery();
+        $image->products_id = $productId;
+
+        $compressImage = Image::make($request->file('image3'))->resize(300, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $path = Str::random(28).".jpg";
+        
+        $compressImage->save(storage_path('app/public/ProductGalleries/'.$path));
+        $image->url = 'storage/ProductGalleries/' . $path;
+        $image->save();
+        $images[] = $image;
+    }
+
+    if ($request->hasFile('image4')) {
+        $image = new ProductGallery();
+        $image->products_id = $productId;
+
+        $compressImage = Image::make($request->file('image4'))->resize(300, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $path = Str::random(28).".jpg";
+        
+        $compressImage->save(storage_path('app/public/ProductGalleries/'.$path));
+        $image->url = 'storage/ProductGalleries/' . $path;
+        $image->save();
+        $images[] = $image;
+    }
+
+    if ($request->hasFile('image5')) {
+        $image = new ProductGallery();
+        $image->products_id = $productId;
+
+        $compressImage = Image::make($request->file('image5'))->resize(300, null, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        $path = Str::random(28).".jpg";
+        
+        $compressImage->save(storage_path('app/public/ProductGalleries/'.$path));
+        $image->url = 'storage/ProductGalleries/' . $path;
+        $image->save();
+        $images[] = $image;
+    }
+
+    if ($request->hasFile('image6')) {
+        $image = new ProductGallery();
+        $image->products_id = $productId;
+
+        $compressImage = Image::make($request->file('image6'))->resize(300, null, function ($constraint) {
             $constraint->aspectRatio();
         });
 
