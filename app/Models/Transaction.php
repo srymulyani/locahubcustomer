@@ -63,7 +63,7 @@ class Transaction extends Model
         $code = $prefix . '/' . substr(str_shuffle($uniqueString), 0, 10);
 
         // periksa apakah nomor transaksi sudah pernah digunakan sebelumnya
-        $lastTransaction = self::select([\DB::raw('MAX(transaction.code) AS last_code')])
+        $lastTransaction = self::select([\DB::raw('MAX(transactions.code) AS last_code')])
             ->where('code', 'like', $prefix . '/%')
             ->first();
 

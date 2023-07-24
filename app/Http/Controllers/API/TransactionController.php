@@ -28,7 +28,7 @@ class TransactionController extends Controller
                 ->orWhere("status", "like", "%$keyword%");
         }
 
-        if ($status && in_array($status, ['menunggu_konfirmasi', 'diproses', 'dikirim', 'selesai', 'dibatalkan', 'menunggu_pembayaran', 'expired'])) {
+        if ($status && in_array($status, ['menunggu_konfirmasi', 'diproses', 'dikirim', 'selesai', 'dibatalkan', 'menunggu-pembayaran', 'expired'])) {
             $transactions = $transactions->whereHas('store_transactions', function ($q) use ($status) {
                 $q->where('status', $status);
             });
@@ -47,6 +47,41 @@ class TransactionController extends Controller
             "transactions" => $transactions,
             "message" => "Data successfully retrieved"
         ], 200);
+    }
+
+    public function indexStoreTrans(Request $request)
+    {
+        $storeTransactions = StoreTransaction::with(['transaction', 'transaction.buyer', 'store', 'transaction.address' ,'items', 'items.product', 'items.product.category', 'items.product.galleries', 'items.product.variation']);
+        $limit = $request->limit ? intval($request->limit) : 10;
+        $status = $request->status ? $request->status : null;
+        $store_id = $request->store_id ? $request->store_id : null;
+        $invoice = $request->invoice ? $request->invoice : null;
+
+        if ($status && in_array($status, ['menunggu_konfirmasi', 'diproses', 'dikirim', 'selesai', 'dibatalkan', 'menunggu-pembayaran', 'expired'])) {
+            $storeTransactions = $storeTransactions->where('status', $status);
+            if ($store_id) {
+                $storeTransactions = $storeTransactions->where('store_id', $store_id);
+            }
+        }
+
+        if ($invoice) {
+            $storeTransactions = $storeTransactions->whereHas('transaction', function ($q) use ($invoice) {
+                $q->where("code", "like", "%$invoice%");
+            });
+        }
+
+        // if ($limit == -1) {
+        //     $storeTransactions = [
+        //         "data" => $storeTransactions->get()
+        //     ];
+        // } else {
+        //     $storeTransactions = $storeTransactions->paginate($limit);
+        // }
+
+        return ResponseFormatter::success(
+            $storeTransactions->get(),
+            'Data successfully retrieved.',
+         );
     }
 
     public function store(Request $request)

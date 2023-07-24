@@ -11,7 +11,7 @@ use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\ProductGalleryController;
 use App\Http\Controllers\API\ProductCategoryController;
 use App\Http\Controllers\API\EmailVerificationController;
-use App\Http\Controllers\API\{BankController, CartController, CourierController, InvoiceController, MidtransController, RajaOngkirController, SocialiteController, TransactionController};
+use App\Http\Controllers\API\{BankController, CartController, CityController, CourierController, InvoiceController, MidtransController, RajaOngkirController, SocialiteController, TransactionController};
 use App\Http\Controllers\API\StoreController;
 use App\Http\Controllers\API\VoucherController;
 use App\Http\Controllers\API\ProductRatingController;
@@ -84,6 +84,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/shipment/{store_transaction_id}/track', [TransactionController::class, 'trackShipment']);
     Route::put('/shipment/{store_transaction_id}/finish', [TransactionController::class, 'finishShipment']);
 
+    // STORE TRANSACTION
+    Route::get('/store-transaction', [TransactionController::class, 'indexStoreTrans']);
+
     // CART
     Route::get('/cart', [CartController::class, 'index']);
     Route::post('/cart', [CartController::class, 'store']);
@@ -122,6 +125,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('category', [ProductCategoryController::class, 'create']);
     Route::post('edit/category', [ProductCategoryController::class, 'edit']);
     Route::delete('category/{id}', [ProductCategoryController::class, 'delete']);
+
+    //CITY
+    Route::get('cities', [CityController::class, 'fetch']);
 });
 
 // Shipment

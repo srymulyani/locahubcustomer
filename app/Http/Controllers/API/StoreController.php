@@ -91,7 +91,7 @@ class StoreController extends Controller
             $store=Store::create([
                 // 'user_id'=>$request->user_id, //HARUS DIGANTI JADI Auth::user()->id
                 'user_id'=>Auth::user()->id,
-                'city_id' => 1,
+                'city_id' => 256,
                 'name' =>$request->name,
                 'username' =>$request->username,
                 'address' => $request->address,
