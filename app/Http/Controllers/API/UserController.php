@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Socialite\Facades\Socialite;
+use PhpParser\Node\Stmt\Echo_;
 
 class UserController extends Controller
 {
@@ -53,7 +54,6 @@ class UserController extends Controller
     public function login(Request $request)
     {
         try{
-         
             $validator= Validator::make($request->all(),[
                 'email' => 'email|required',
                 'username' => 'username|required',
@@ -71,8 +71,8 @@ class UserController extends Controller
             //     ], 'Authentication Error', 500);
             // } 
             $user = User::where('email', $request->email)
-                ->orWhere('username', $request->username)
-                ->orWhere('phone_number', $request->phone_number)
+                // ->orWhere('username', $request->username)
+                // ->orWhere('phone_number', $request->phone_number)
                 ->first();
             if (!Hash::check($request->password,$user->password,[])){
                 throw new Exception("Invalid Credentials",1);
