@@ -70,16 +70,16 @@ class TransactionController extends Controller
             });
         }
 
-        if ($limit == -1) {
-            $storeTransactions = [
-                "data" => $storeTransactions->get()
-            ];
-        } else {
-            $storeTransactions = $storeTransactions->paginate($limit);
-        }
+        // if ($limit == -1) {
+        //     $storeTransactions = [
+        //         "data" => $storeTransactions->get()
+        //     ];
+        // } else {
+        //     $storeTransactions = $storeTransactions->paginate($limit);
+        // }
 
         return ResponseFormatter::success(
-            $storeTransactions,
+            $storeTransactions->get(),
             'Data successfully retrieved.',
          );
     }
